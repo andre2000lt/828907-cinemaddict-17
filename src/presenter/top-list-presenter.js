@@ -9,14 +9,15 @@ export default class FilmsListPresenter {
   topListWrapper = new TopListWrapperView();
   filmsList = new FilmsListView();
 
-  init = (container) => {
+  init = (container, model) => {
     this.container = container;
+    this.moviesCards = model.getMoviesInfo();
 
     render(this.topListWrapper, this.container);
     render(this.filmsList, this.topListWrapper.getElement());
 
     for (let i = 0; i < 2; i++) {
-      render(new FilmCardView(), this.filmsList.getElement());
+      render(new FilmCardView(this.moviesCards[i]), this.filmsList.getElement());
     }
   };
 }

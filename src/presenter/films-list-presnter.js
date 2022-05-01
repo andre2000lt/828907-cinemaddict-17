@@ -10,14 +10,15 @@ export default class FilmsListPresenter {
   filmsList = new FilmsListView();
   showMoreButton = new ShowMoreView();
 
-  init = (container) => {
+  init = (container, model) => {
     this.container = container;
+    this.moviesCards = model.getMoviesInfo();
 
     render(this.filmsListWrapper, this.container);
     render(this.filmsList, this.filmsListWrapper.getElement());
 
-    for (let i = 0; i < 5; i++) {
-      render(new FilmCardView(), this.filmsList.getElement());
+    for (let i = 0; i < this.moviesCards.length; i++) {
+      render(new FilmCardView(this.moviesCards[i]), this.filmsList.getElement());
     }
 
     render(this.showMoreButton, this.filmsListWrapper.getElement());
