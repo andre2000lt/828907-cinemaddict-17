@@ -2,7 +2,7 @@ import {createElement} from '../render.js';
 
 const createFilmCardTemplate = (card) => {
   const {title, total_rating:rating, description, poster, runtime, genre} = card.film_info;
-  const {watching_date:watchingDate, watchlist, already_watched:alreadyWatched, favorite} = card.user_details;
+  const {watchlist, already_watched:alreadyWatched, favorite} = card.user_details;
 
   const {date} = card.film_info.release;
   const year = new Date(Date.parse(date)).getFullYear();
