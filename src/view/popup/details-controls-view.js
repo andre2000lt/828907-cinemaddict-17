@@ -1,7 +1,7 @@
 import {createElement} from '../../render.js';
 
 const createDetailsControlsTemplate = (card) => {
-  const {watching_date:watchingDate, watchlist, already_watched:alreadyWatched, favorite} = card.user_details;
+  const {watchlist, already_watched:alreadyWatched, favorite} = card.user_details;
 
   const watchlistClass = watchlist ? 'film-details__control-button--active' : '';
   const alreadyWatchedClass = alreadyWatched ? 'film-details__control-button--active' : '';
