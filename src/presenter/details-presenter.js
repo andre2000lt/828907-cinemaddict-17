@@ -7,37 +7,77 @@ import DetailsInfoView from '../view/popup/details-info-view';
 import DetailsControlsView from '../view/popup/details-controls-view';
 
 import CommentsPresenter from './comments-presenter';
-import CommentsModel from '../model/commets-model';
+
 
 import {render} from '../render.js';
 
 export default class DetailsPresenter {
-  details = new DetailsView();
-  detailsForm = new DetailsFormView();
+  //view
+  #details = new DetailsView();
+  #detailsForm = new DetailsFormView();
+  #detailsTop = new DetailsTopView();
+  #detailsClose = new DetailsCloseView();
+  #detailsBottom = new DetailsBottomView();
 
-  detailsTop = new DetailsTopView();
-  detailsClose = new DetailsCloseView();
+  #detailsInfoElement = null;
+  #detailsControlsElement = null;
 
-  detailsBottom = new DetailsBottomView();
+  // dom
+  #container = null;
 
-  commentsPresenter = new CommentsPresenter();
-  commentsModel = new CommentsModel();
+  // data
+  #movieCard = null;
+  #movieComments = [];
 
+  // presener
+  #commentsPresenter = null;
 
-  init = (container, moviesModel) => {
-    this.container = container;
-    this.moviesCards = moviesModel.getMoviesInfo();
+  constructor(container, movieCard, movieComments) {
+    this.#movieCard = movieCard;
+    this.#movieComments = movieComments;
 
-    render(this.details, this.container, 'afterend');
-    render(this.detailsForm, this.details.getElement());
+    this.#container = container;
 
-    render(this.detailsTop, this.detailsForm.getElement());
-    render(this.detailsClose, this.detailsTop.getElement());
-    render(new DetailsInfoView(this.moviesCards[0]), this.detailsTop.getElement());
-    render(new DetailsControlsView(this.moviesCards[0]), this.detailsTop.getElement());
+    this.#detailsInfoElement = new DetailsInfoView(this.#movieCard);
+    this.#detailsControlsElement = new DetailsControlsView(this.#movieCard);
 
-    render(this.detailsBottom, this.detailsForm.getElement());
+    this.#commentsPresenter = new CommentsPresenter(this.#detailsBottom, this.#movieComments);
+  }
 
-    this.commentsPresenter.init(this.detailsBottom, this.commentsModel, this.moviesCards[0].comments);
+  init() {
+    render(this.#details, this.#container, 'afterend');
+    render(this.#detailsForm, this.#details.element);
+
+    render(this.#detailsTop, this.#detailsForm.element);
+    render(this.#detailsClose, this.#detailsTop.element);
+    render(this.#detailsInfoElement, this.#detailsTop.element);
+    render(this.#detailsControlsElement, this.#detailsTop.element);
+
+    render(this.#detailsBottom, this.#detailsForm.element);
+
+    this.#commentsPresenter.init();
+
+    this.#detailsClose.element.addEventListener('click',  this.#onClosecButtonClick);
+    document.addEventListener('keydown', this.#onEscKeyDown);
+  }
+
+  #onClosecButtonClick = () => {
+    this.#closePopUp();
   };
+
+  #onEscKeyDown = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      this.#closePopUp();
+    }
+  };
+
+  #closePopUp() {
+    document.body.classList.remove('hide-overflow');
+
+    this.#detailsClose.element.removeEventListener('click',  this.#onClosecButtonClick);
+    document.removeEventListener('keydown', this.#onEscKeyDown);
+
+    this.#details.element.remove();
+  }
 }

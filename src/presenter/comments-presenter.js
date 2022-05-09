@@ -6,19 +6,27 @@ import AddCommentView from '../view/popup/add-comment-view';
 import {render} from '../render.js';
 
 export default class CommentsPresenter {
-  commentsList = new CommentsListView();
-  addComment = new AddCommentView();
+  #commentsList = new CommentsListView();
+  #addComment = new AddCommentView();
+  #container = null;
+  #commentsWrapper = null;
 
-  init = (container, commentsModel, commentsIdArr) => {
-    this.container = container;
-    this.comments = commentsModel.getCommentsInfoByIds(commentsIdArr);
-    this.commentsWrapper = new CommentsWrapperView(this.comments.length);
+  #comments = []; // все комменты к выьранному фильму
 
-    render(this.commentsWrapper, this.container.getElement());
-    render(this.commentsList, this.commentsWrapper.getElement());
-    for (let i = 0; i < this.comments.length; i++) {
-      render(new CommentView(this.comments[i]), this.commentsList.getElement());
+  constructor(container, comments) {
+    this.#container = container;
+    this.#commentsWrapper = new CommentsWrapperView(this.#comments.length);
+    this.#comments = comments;
+  }
+
+  init() {
+
+
+    render(this.#commentsWrapper, this.#container.element);
+    render(this.#commentsList, this.#commentsWrapper.element);
+    for (let i = 0; i < this.#comments.length; i++) {
+      render(new CommentView(this.#comments[i]), this.#commentsList.element);
     }
-    render(this.addComment, this.container.getElement());
-  };
+    render(this.#addComment, this.#container.element);
+  }
 }

@@ -93,23 +93,26 @@ const createDetailsInfoTemplate = (card) => {
 
 
 export default class DetailsInfoView {
+  #element = null;
+  #card = null;
+
   constructor(card) {
-    this.card = card;
+    this.#card = card;
   }
 
-  getTemplate() {
-    return createDetailsInfoTemplate(this.card);
+  get template() {
+    return createDetailsInfoTemplate(this.#card);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
+  get element() {
+    if (!this.#element) {
+      this.#element = createElement(this.template);
     }
 
-    return this.element;
+    return this.#element;
   }
 
   removeElement() {
-    this.element = null;
+    this.#element = null;
   }
 }

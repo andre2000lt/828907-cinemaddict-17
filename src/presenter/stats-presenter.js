@@ -3,11 +3,15 @@ import StatsView from '../view/stats-view';
 import {render} from '../render.js';
 
 export default class FilmsListPresenter {
-  stats = new StatsView();
+  #stats = new StatsView();
+  #container = null;
 
-  init = (container) => {
-    this.container = container;
 
-    render(this.stats, this.container);
-  };
+  constructor(container) {
+    this.#container = container;
+  }
+
+  init() {
+    render(this.#stats, this.#container);
+  }
 }

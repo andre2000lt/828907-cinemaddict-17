@@ -50,5 +50,20 @@ const getTimeFromIso = (isoDate) => {
 
 const emotions = ['smile', 'sleeping', 'puke', 'angry'];
 
+const splitArray = (array, childArrayLength) => {
+  if (childArrayLength >= array.length) {
+    return [array.slice()];
+  }
 
-export {getRandomInteger, getRandomDate, shuffleArray, getTimeFromIso, emotions};
+  const newArray = [];
+  let n = 0;
+  while(n <= array.length - 1) {
+    newArray.push(array.slice(n, n + childArrayLength));
+    n += childArrayLength;
+  }
+
+  return newArray;
+};
+
+
+export {getRandomInteger, getRandomDate, shuffleArray, getTimeFromIso, splitArray, emotions};

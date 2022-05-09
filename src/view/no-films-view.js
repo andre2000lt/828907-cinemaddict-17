@@ -1,14 +1,12 @@
 import {createElement} from '../render.js';
 
-const createShowMoreTemplate = () => `<button class="films-list__show-more">Show more
-</button>`;
+const createNofilmsTemplate = () => '<h2 class="films-list__title">There are no movies in our database</h2>';
 
-
-export default class ShowMoreView {
+export default class NofilmsView {
   #element = null;
 
   get template() {
-    return createShowMoreTemplate();
+    return createNofilmsTemplate();
   }
 
   get element() {
