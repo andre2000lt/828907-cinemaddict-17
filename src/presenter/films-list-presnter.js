@@ -23,6 +23,7 @@ export default class FilmsListPresenter {
 
   #commentsModel = {};
 
+  // view
   #filmsListWrapper = new FilmsListWrapperView();
   #topListWrapper = new TopListWrapperView();
   #mostCommentedListWrapper = new MostCommentedListWrapperView();
