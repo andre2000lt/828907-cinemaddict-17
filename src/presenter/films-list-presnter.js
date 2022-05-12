@@ -22,6 +22,7 @@ export default class FilmsListPresenter {
   #splittedMoviesCards = {};
 
   #commentsModel = {};
+  #detailsPresenter = {};
 
   // view
   #filmsListWrapper = new FilmsListWrapperView();
@@ -63,9 +64,9 @@ export default class FilmsListPresenter {
   #onShowMoreButtonClick = (evt) => {
     evt.preventDefault();
 
-    for (let i = 0; i < this.#splittedMoviesCards[this.#currentFilmCardsStep].length; i++) {
-      this.#renderFilmCard(this.#splittedMoviesCards[this.#currentFilmCardsStep][i], this.#filmsList);
-    }
+    this.#splittedMoviesCards[this.#currentFilmCardsStep].forEach((card)=>{
+      this.#renderFilmCard(card, this.#filmsList);
+    });
 
     this.#currentFilmCardsStep += 1;
 
@@ -79,12 +80,11 @@ export default class FilmsListPresenter {
   #renderFilmCard(card, list) {
     const filmCardView = new FilmCardView(card);
     const comments = this.#commentsModel.getCommentsInfoByIds(card.comments);
-    const detailsPresenter = new DetailsPresenter(this.#siteFooterElement, card, comments);
-
 
     const onCardLinkClick = () => {
       document.body.classList.add('hide-overflow');
-      detailsPresenter.init();
+      this.#detailsPresenter = new DetailsPresenter(this.#siteFooterElement, card, comments);
+      this.#detailsPresenter.init();
     };
 
     filmCardView.element.querySelector('.film-card__link').addEventListener('click', onCardLinkClick);
@@ -94,9 +94,9 @@ export default class FilmsListPresenter {
 
 
   #renderFilmsList() {
-    for (let i = 0; i < this.#splittedMoviesCards[this.#currentFilmCardsStep].length; i++) {
-      this.#renderFilmCard(this.#splittedMoviesCards[this.#currentFilmCardsStep][i], this.#filmsList);
-    }
+    this.#splittedMoviesCards[this.#currentFilmCardsStep].forEach((card)=>{
+      this.#renderFilmCard(card, this.#filmsList);
+    });
 
     this.#currentFilmCardsStep += 1;
 

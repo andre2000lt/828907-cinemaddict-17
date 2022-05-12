@@ -1,7 +1,7 @@
-import {generateMovieInfo} from '../mock/movie.js';
+import {randomCards} from '../mock/movie.js';
 
 export default class MoviesModel {
-  #moviesInfo = Array.from({length: 25}, generateMovieInfo);
+  #moviesInfo = [...randomCards];
 
   get moviesInfo() {
     return this.#moviesInfo;

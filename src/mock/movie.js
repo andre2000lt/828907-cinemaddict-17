@@ -91,7 +91,7 @@ const generateDuration = () => getRandomInteger(10, 305);
 
 let lastId = 1;
 
-export const generateMovieInfo = () => ({
+const generateMovieInfo = () => ({
   'id': lastId++,
   'comments': [
     1, 2, 5
@@ -120,3 +120,5 @@ export const generateMovieInfo = () => ({
     'favorite': Boolean(getRandomInteger(0, 1))
   }
 });
+
+export const randomCards = Array.from({length: 25}, generateMovieInfo);
