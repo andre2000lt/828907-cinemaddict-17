@@ -1,24 +1,9 @@
-import {createElement} from '../render.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const createStatsTemplate = () => '<p>130 291 movies inside</p>';
 
-
-export default class StatsView {
-  #element = null;
-
+export default class StatsView extends AbstractView {
   get template() {
     return createStatsTemplate();
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

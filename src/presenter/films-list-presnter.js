@@ -60,9 +60,7 @@ export default class FilmsListPresenter {
   }
 
 
-  #onShowMoreButtonClick = (evt) => {
-    evt.preventDefault();
-
+  #onShowMoreButtonClick = () => {
     for (let i = 0; i < this.#splittedMoviesCards[this.#currentFilmCardsStep].length; i++) {
       this.#renderFilmCard(this.#splittedMoviesCards[this.#currentFilmCardsStep][i], this.#filmsList);
     }
@@ -87,7 +85,7 @@ export default class FilmsListPresenter {
       detailsPresenter.init();
     };
 
-    filmCardView.element.querySelector('.film-card__link').addEventListener('click', onCardLinkClick);
+    filmCardView.setLinKClickHandler(onCardLinkClick);
 
     render(filmCardView, list.element);
   }
@@ -103,7 +101,7 @@ export default class FilmsListPresenter {
     if (this.#splittedMoviesCards[this.#currentFilmCardsStep]) {
       render(this.#showMoreButton, this.#filmsListWrapper.element);
 
-      this.#showMoreButton.element.addEventListener('click', this.#onShowMoreButtonClick);
+      this.#showMoreButton.setClickHandler(this.#onShowMoreButtonClick);
     }
   }
 

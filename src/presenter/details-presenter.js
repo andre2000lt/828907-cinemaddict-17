@@ -57,7 +57,7 @@ export default class DetailsPresenter {
 
     this.#commentsPresenter.init();
 
-    this.#detailsClose.element.addEventListener('click',  this.#onClosecButtonClick);
+    this.#detailsClose.setClickHandler(this. #onClosecButtonClick);
     document.addEventListener('keydown', this.#onEscKeyDown);
   }
 

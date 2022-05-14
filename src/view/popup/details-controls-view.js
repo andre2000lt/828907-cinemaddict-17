@@ -1,4 +1,4 @@
-import {createElement} from '../../render.js';
+import AbstractView from '../../framework/view/abstract-view.js';
 
 const createDetailsControlsTemplate = (card) => {
   const {watchlist, already_watched:alreadyWatched, favorite} = card.user_details;
@@ -17,27 +17,15 @@ const createDetailsControlsTemplate = (card) => {
 };
 
 
-export default class DetailsControlsView {
-  #element = null;
+export default class DetailsControlsView extends AbstractView {
   #card = null;
 
   constructor(card) {
+    super();
     this.#card = card;
   }
 
   get template() {
     return createDetailsControlsTemplate(this.#card);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

@@ -15,8 +15,8 @@ export default class CommentsPresenter {
 
   constructor(container, comments) {
     this.#container = container;
-    this.#commentsWrapper = new CommentsWrapperView(this.#comments.length);
     this.#comments = comments;
+    this.#commentsWrapper = new CommentsWrapperView(this.#comments.length);
   }
 
   init() {

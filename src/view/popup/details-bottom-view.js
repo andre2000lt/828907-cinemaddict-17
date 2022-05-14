@@ -1,24 +1,10 @@
-import {createElement} from '../../render.js';
+import AbstractView from '../../framework/view/abstract-view.js';
 
 const createDetailsBottomTemplate = () => '<div class="film-details__bottom-container"></div>';
 
 
-export default class DetailsBottomView {
-  #element = null;
-
+export default class DetailsBottomView extends AbstractView {
   get template() {
     return createDetailsBottomTemplate();
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

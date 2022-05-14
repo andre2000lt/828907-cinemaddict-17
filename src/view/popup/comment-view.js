@@ -1,4 +1,4 @@
-import {createElement} from '../../render.js';
+import AbstractView from '../../framework/view/abstract-view.js';
 import {getTimeFromIso} from '../../utils';
 
 const createCommentTemplate = (comment) => {
@@ -23,27 +23,15 @@ const createCommentTemplate = (comment) => {
   );
 };
 
-export default class CommentView {
-  #element = null;
+export default class CommentView extends AbstractView {
   #comment = null;
 
   constructor(comment) {
+    super();
     this.#comment = comment;
   }
 
   get template() {
     return createCommentTemplate(this.#comment);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

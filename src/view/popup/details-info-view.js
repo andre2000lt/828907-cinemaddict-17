@@ -1,4 +1,4 @@
-import {createElement} from '../../render.js';
+import AbstractView from '../../framework/view/abstract-view.js';
 const monthNames = [
   'January', 'February', 'March',
   'April', 'May', 'June', 'July',
@@ -92,27 +92,15 @@ const createDetailsInfoTemplate = (card) => {
 };
 
 
-export default class DetailsInfoView {
-  #element = null;
+export default class DetailsInfoView extends AbstractView{
   #card = null;
 
   constructor(card) {
+    super();
     this.#card = card;
   }
 
   get template() {
     return createDetailsInfoTemplate(this.#card);
-  }
-
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
-
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
   }
 }

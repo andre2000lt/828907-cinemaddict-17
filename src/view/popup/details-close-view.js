@@ -1,26 +1,22 @@
-import {createElement} from '../../render.js';
+import AbstractView from '../../framework/view/abstract-view.js';
 
 const createDetailsCloseTemplate = () => `<div class="film-details__close">
 <button class="film-details__close-btn" type="button">close</button>
 </div>`;
 
 
-export default class DetailsCloseView {
-  #element = null;
-
+export default class DetailsCloseView extends AbstractView {
   get template() {
     return createDetailsCloseTemplate();
   }
 
-  get element() {
-    if (!this.#element) {
-      this.#element = createElement(this.template);
-    }
+  setClickHandler = (callback) => {
+    this._callback.click = callback;
+    this.element.addEventListener('click', this.#clickHandler);
+  };
 
-    return this.#element;
-  }
-
-  removeElement() {
-    this.#element = null;
-  }
+  #clickHandler = (evt) => {
+    evt.preventDefault();
+    this._callback.click();
+  };
 }
