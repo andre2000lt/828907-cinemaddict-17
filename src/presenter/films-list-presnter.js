@@ -5,7 +5,7 @@ import FilmsListView from '../view/films-list-view';
 import FilmCardView from '../view/film-card-view';
 import ShowMoreView from '../view/show-more-view';
 
-import {render} from '../render.js';
+import {render} from '../framework/render.js';
 import {splitArray} from '../utils.js';
 import NofilmsView from '../view/no-films-view';
 

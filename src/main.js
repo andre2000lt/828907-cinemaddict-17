@@ -8,7 +8,7 @@ import MoviesModel from './model/movies-model.js';
 import CommentsModel from './model/commets-model';
 import StatsPresenter from './presenter/stats-presenter';
 
-import {render} from './render.js';
+import {render} from './framework/render.js';
 
 const siteMainElement = document.querySelector('.main');
 const siteHeaderElement = document.querySelector('.header');

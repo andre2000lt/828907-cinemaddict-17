@@ -9,7 +9,7 @@ import DetailsControlsView from '../view/popup/details-controls-view';
 import CommentsPresenter from './comments-presenter';
 
 
-import {render} from '../render.js';
+import {render} from '../framework/render.js';
 
 export default class DetailsPresenter {
   //view

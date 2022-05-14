@@ -3,7 +3,7 @@ import CommentsListView from '../view/popup/comments-list-view';
 import CommentView from '../view/popup/comment-view';
 import AddCommentView from '../view/popup/add-comment-view';
 
-import {render} from '../render.js';
+import {render} from '../framework/render.js';
 
 export default class CommentsPresenter {
   #commentsList = new CommentsListView();

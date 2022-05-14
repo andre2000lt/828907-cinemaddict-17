@@ -1,6 +1,6 @@
 import StatsView from '../view/stats-view';
 
-import {render} from '../render.js';
+import {render} from '../framework/render.js';
 
 export default class FilmsListPresenter {
   #stats = new StatsView();
