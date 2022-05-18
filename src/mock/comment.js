@@ -32,10 +32,12 @@ const generateEmotion = () => {
 
 let lastId = 1;
 
-export const generateCommentInfo = () => ({
+const generateCommentInfo = () => ({
   'id': lastId++,
   'author': generateAuthor(),
   'comment': generateComment(),
   'date': generateDateTime(),
   'emotion': generateEmotion()
 });
+
+export const commentsInfo = Array.from({length: 15}, generateCommentInfo);

@@ -65,5 +65,19 @@ const splitArray = (array, childArrayLength) => {
   return newArray;
 };
 
+const updateItem = (items, update) => {
+  const index = items.findIndex((item) => item.id === update.id);
 
-export {getRandomInteger, getRandomDate, shuffleArray, getTimeFromIso, splitArray, emotions};
+  if (index === -1) {
+    return items;
+  }
+
+  return [
+    ...items.slice(0, index),
+    update,
+    ...items.slice(index + 1),
+  ];
+};
+
+
+export {getRandomInteger, getRandomDate, shuffleArray, getTimeFromIso, splitArray, emotions, updateItem};

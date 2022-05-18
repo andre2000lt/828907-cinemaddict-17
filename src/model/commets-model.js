@@ -1,7 +1,10 @@
-import {generateCommentInfo} from '../mock/comment.js';
+import {commentsInfo} from '../mock/comment.js';
 
 export default class CommentsModel {
-  #commentsInfo = Array.from({length: 15}, generateCommentInfo);
+  #commentsInfo = [...commentsInfo];
 
-  getCommentsInfoByIds = (idArr) => this.#commentsInfo.filter((elem) => idArr.includes(elem.id));
+  getCommentsInfoByIds(idArr) {
+    return this.#commentsInfo.filter((elem) => idArr.includes(elem.id));
+  }
+
 }
