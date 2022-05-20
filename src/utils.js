@@ -79,5 +79,31 @@ const updateItem = (items, update) => {
   ];
 };
 
+const RATINGS = {
+  'movie buff': 21,
+  'fun': 11,
+  'novice': 1
+};
 
-export {getRandomInteger, getRandomDate, shuffleArray, getTimeFromIso, splitArray, emotions, updateItem};
+const getUserStatus = (cardsData) => {
+  const watchedFilms = cardsData.reduce((sum, curr) => sum + +(curr.user_details['already_watched']), 0);
+  if (watchedFilms >= RATINGS['movie buff']) {
+    return 'movie buff';
+  } else if (watchedFilms >= RATINGS['fun']) {
+    return 'fan';
+  } else if (watchedFilms >= RATINGS['novice']) {
+    return 'novice';
+  } else {
+    return '';
+  }
+};
+
+
+const getFilterStats = (cardsData) => ({
+  'watchlist': cardsData.reduce((sum, curr) => sum + +(curr.user_details['watchlist']), 0),
+  'history': cardsData.reduce((sum, curr) => sum + +(curr.user_details['already_watched']), 0),
+  'favorites': cardsData.reduce((sum, curr) => sum + +(curr.user_details['favorite']), 0),
+});
+
+
+export {getRandomInteger, getRandomDate, shuffleArray, getTimeFromIso, splitArray, emotions, updateItem, getUserStatus, getFilterStats};
