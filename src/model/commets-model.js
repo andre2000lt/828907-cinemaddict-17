@@ -7,8 +7,7 @@ export default class CommentsModel {
     this.#commentsInfo = [...commentsInfo];
   }
 
-  getCommentsInfoByIds(idArr) {
-    return this.#commentsInfo.filter((elem) => idArr.includes(elem.id));
+  getCommentsInfoByIds(ids) {
+    return this.#commentsInfo.filter((elem) => ids.includes(elem.id));
   }
-
 }

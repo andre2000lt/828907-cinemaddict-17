@@ -86,24 +86,41 @@ const RATINGS = {
 };
 
 const getUserStatus = (cardsData) => {
-  const watchedFilms = cardsData.reduce((sum, curr) => sum + +(curr.user_details['already_watched']), 0);
+  const watchedFilms = cardsData.filter((cardData) => cardData.user_details['already_watched']).length;
+
   if (watchedFilms >= RATINGS['movie buff']) {
     return 'movie buff';
-  } else if (watchedFilms >= RATINGS['fun']) {
-    return 'fan';
-  } else if (watchedFilms >= RATINGS['novice']) {
-    return 'novice';
-  } else {
-    return '';
   }
+  if (watchedFilms >= RATINGS['fun']) {
+    return 'fan';
+  }
+  if (watchedFilms >= RATINGS['novice']) {
+    return 'novice';
+  }
+
+  return '';
 };
 
 
 const getFilterStats = (cardsData) => ({
-  'watchlist': cardsData.reduce((sum, curr) => sum + +(curr.user_details['watchlist']), 0),
-  'history': cardsData.reduce((sum, curr) => sum + +(curr.user_details['already_watched']), 0),
-  'favorites': cardsData.reduce((sum, curr) => sum + +(curr.user_details['favorite']), 0),
+  'watchlist': cardsData.filter((cardData) => cardData.user_details['watchlist']).length,
+  'history': cardsData.filter((cardData) => cardData.user_details['already_watched']).length,
+  'favorites': cardsData.filter((cardData) => cardData.user_details['favorite']).length,
+});
+
+const sortCardsByDate = (cardsData) => cardsData.sort((a, b) => {
+  const dateA = Date.parse(a.film_info.release.date);
+  const dateB = Date.parse(b.film_info.release.date);
+
+  return  dateB - dateA;
+});
+
+const sortCardsByRating = (cardsData) => cardsData.sort((a, b) => {
+  const rateA = a.film_info.total_rating;
+  const rateB = b.film_info.total_rating;
+
+  return rateB - rateA;
 });
 
 
-export {getRandomInteger, getRandomDate, shuffleArray, getTimeFromIso, splitArray, emotions, updateItem, getUserStatus, getFilterStats};
+export {getRandomInteger, getRandomDate, shuffleArray, getTimeFromIso, splitArray, emotions, updateItem, getUserStatus, getFilterStats, sortCardsByDate, sortCardsByRating};
