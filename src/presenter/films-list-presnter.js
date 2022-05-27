@@ -31,9 +31,9 @@ export default class FilmsListPresenter {
 
 
   #filmCardPresenters = {
-    'main': new Map(),
-    'top': new Map(),
-    'most commented': new Map()
+    [listType.MAIN]: new Map(),
+    [listType.TOP]: new Map(),
+    [listType.MOST_COMMENTED]: new Map()
   };
 
   // view
@@ -46,9 +46,9 @@ export default class FilmsListPresenter {
   #showMoreButtonView = new ShowMoreView();
 
   #filmLists = {
-    'main': new FilmsListView(),
-    'top': new FilmsListView(),
-    'most commented': new FilmsListView()
+    [listType.MAIN]: new FilmsListView(),
+    [listType.TOP]: new FilmsListView(),
+    [listType.MOST_COMMENTED]: new FilmsListView()
   };
 
   #filterView = null;
@@ -70,7 +70,7 @@ export default class FilmsListPresenter {
 
     render(this.#allListsWrapperView, this.#container);
     render(this.#mainListWrapperView, this.#allListsWrapperView.element);
-    render(this.#filmLists['main'], this.#mainListWrapperView.element);
+    render(this.#filmLists[listType.MAIN], this.#mainListWrapperView.element);
 
     if(this.#moviesDataCards.length === 0) {
       this.#mainListWrapperView.element.querySelector('h2').remove();
@@ -120,7 +120,7 @@ export default class FilmsListPresenter {
   };
 
   #renderNoFilmsElement() {
-    render(new NofilmsView(), this.#filmLists['main'].element);
+    render(new NofilmsView(), this.#filmLists[listType.MAIN].element);
   }
 
   #onFilmCardUpdate = (updatedCardData) => {
@@ -129,10 +129,6 @@ export default class FilmsListPresenter {
     for (const listName in this.#filmCardPresenters) {
       const cardPresenter = this.#filmCardPresenters[listName].get(updatedCardData.id);
       cardPresenter.init(updatedCardData);
-
-      if (cardPresenter.isPopupOpened()) {
-        cardPresenter.updateDetailsPresenter();
-      }
     }
   };
 
@@ -168,7 +164,7 @@ export default class FilmsListPresenter {
     this.#moviesDataCards
       .slice(from, to)
       .forEach((filmCard) => {
-        this.#renderFilmCard(filmCard, listType['MAIN']);
+        this.#renderFilmCard(filmCard, listType.MAIN);
       });
 
     this.#renderedFilmCount = to;
@@ -183,23 +179,23 @@ export default class FilmsListPresenter {
     render(this.#filmLists['top'], this.#topListWrapperView.element);
 
     for (let i = 0; i < 2; i++) {
-      this.#renderFilmCard(this.#moviesDataCards[i], listType['TOP']);
+      this.#renderFilmCard(this.#moviesDataCards[i], listType.TOP);
     }
   }
 
   #renderMostCommentedList() {
     render(this.#mostCommentedListWrapperView, this.#allListsWrapperView.element);
-    render(this.#filmLists['most commented'], this.#mostCommentedListWrapperView.element);
+    render(this.#filmLists[listType.MOST_COMMENTED], this.#mostCommentedListWrapperView.element);
 
     for (let i = 0; i < 2; i++) {
-      this.#renderFilmCard(this.#moviesDataCards[i], listType['MOST_COMMENTED']);
+      this.#renderFilmCard(this.#moviesDataCards[i], listType.MOST_COMMENTED);
     }
   }
 
   #clearFilmList() {
-    this.#filmCardPresenters['main']
+    this.#filmCardPresenters[listType.MAIN]
       .forEach((filmCard) => {filmCard.destroy(); });
-    this.#filmCardPresenters['main'].clear();
+    this.#filmCardPresenters[listType.MAIN].clear();
     this.#renderedFilmCount = 0;
     remove(this.#showMoreButtonView);
   }

@@ -10,4 +10,11 @@ const sortType = {
   'RATING': 'rating'
 };
 
-export {listType, sortType};
+const emoji = {
+  'SMILE': 'smile',
+  'SLEEPING': 'sleeping',
+  'PUKE': 'puke',
+  'ANGRY': 'angry'
+};
+
+export {listType, sortType, emoji};

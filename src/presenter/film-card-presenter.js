@@ -44,6 +44,10 @@ export default class FilmCardPresenter {
     } else {
       replace(this.#filmCardView, prevfilmCardView);
       remove(prevfilmCardView);
+
+      if (this.isPopupOpened()) {
+        this.updateDetailsPresenter();
+      }
     }
   }
 
