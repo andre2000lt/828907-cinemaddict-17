@@ -25,9 +25,9 @@ export default class AbstractStatefulView extends AbstractView {
    * Метод для восстановления обработчиков после перерисовки элемента
    * @abstract
    */
-  _restoreHandlers = () => {
+  _restoreHandlers() {
     throw new Error('Abstract method not implemented: restoreHandlers');
-  };
+  }
 
   /**
    * Метод для обновления состояния

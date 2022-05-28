@@ -1,5 +1,5 @@
 import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
-import {emoji} from '../../consts';
+import {Emoji} from '../../consts';
 
 const BLANK_COMMENT = {
   'comment': '',
@@ -8,12 +8,12 @@ const BLANK_COMMENT = {
 
 const createEmojiesTemplate = (emotion) => {
   let emojies = '';
-  for (const key in emoji) {
-    const checked = (emoji[key] === emotion) ? 'checked' : '';
+  for (const key in Emoji) {
+    const checked = (Emoji[key] === emotion) ? 'checked' : '';
 
-    emojies += `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${emoji[key]}" value="${emoji[key]}" ${checked}>
-      <label class="film-details__emoji-label" for="emoji-${emoji[key]}">
-        <img src="./images/emoji/${emoji[key]}.png" width="30" height="30" alt="emoji">
+    emojies += `<input class="film-details__emoji-item visually-hidden" name="comment-emoji" type="radio" id="emoji-${Emoji[key]}" value="${Emoji[key]}" ${checked}>
+      <label class="film-details__emoji-label" for="emoji-${Emoji[key]}">
+        <img src="./images/emoji/${Emoji[key]}.png" width="30" height="30" alt="emoji">
       </label>`;
   }
 
@@ -57,9 +57,9 @@ export default class AddCommentView extends AbstractStatefulView {
 
   static parseCommentToState = (comment) => ({...comment});
 
-  _restoreHandlers = () => {
+  _restoreHandlers() {
     this.#setInnerHandlers();
-  };
+  }
 
   #emotionClickHandler = (evt) => {
     if (evt.target.tagName !== 'INPUT') {

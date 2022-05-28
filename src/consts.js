@@ -1,20 +1,20 @@
-const listType = {
+const ListType = {
   'MAIN': 'main',
   'TOP': 'top',
   'MOST_COMMENTED': 'most commented'
 };
 
-const sortType = {
+const SortType = {
   'DEFAULT': 'default',
   'DATE': 'date',
   'RATING': 'rating'
 };
 
-const emoji = {
+const Emoji = {
   'SMILE': 'smile',
   'SLEEPING': 'sleeping',
   'PUKE': 'puke',
   'ANGRY': 'angry'
 };
 
-export {listType, sortType, emoji};
+export {ListType, SortType, Emoji};
