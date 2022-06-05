@@ -90,11 +90,12 @@ const generateActors = () => {
 const generateDuration = () => getRandomInteger(10, 305);
 
 let lastId = 1;
+let commentId = 1;
 
 const generateMovieInfo = () => ({
   'id': lastId++,
   'comments': [
-    1, 2, 5
+    (commentId++).toString(), (commentId++).toString(), (commentId++).toString()
   ],
   'film_info': {
     'title': generateTitle(),
@@ -121,4 +122,4 @@ const generateMovieInfo = () => ({
   }
 });
 
-export const moviesInfo = Array.from({length: 25}, generateMovieInfo);
+export const moviesDataCards = Array.from({length: 25}, generateMovieInfo);

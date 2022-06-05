@@ -6,6 +6,8 @@ import DetailsCloseView from '../view/popup/details-close-view';
 import DetailsInfoView from '../view/popup/details-info-view';
 import DetailsControlsView from '../view/popup/details-controls-view';
 
+import {UserAction, UpdateType} from '../consts';
+
 import CommentsPresenter from './comments-presenter';
 
 
@@ -29,20 +31,21 @@ export default class DetailsPresenter {
 
   // data
   #movieCard = null;
-  #movieComments = [];
+  #commentsModel = null;
 
   // presener
   #commentsPresenter = null;
 
-  constructor(container, destroyDetailsPresenter, updateCard) {
+  constructor(container, destroyDetailsPresenter, updateCard, commentsModel) {
     this.#destroyDetailsPresenter = destroyDetailsPresenter;
     this.#updateCard = updateCard;
     this.#container = container;
+    this.#commentsModel = commentsModel;
   }
 
-  init(movieCard, movieComments) {
+  init(movieCard) {
     this.#movieCard = movieCard;
-    this.#movieComments = movieComments;
+
 
     const prevDetailsControlsElement = this.#detailsControlsElement;
 
@@ -53,42 +56,45 @@ export default class DetailsPresenter {
     this.#detailsControlsElement.setAlreadyWatchedClickHandler(this.#onAlreadyWatchedClick);
     this.#detailsControlsElement.setWatchlistClickHandler(this.#onWatchlistClick);
 
-    if (prevDetailsControlsElement !== null) {
+    if (prevDetailsControlsElement !== null || this.#commentsPresenter !== null) {
       replace(this.#detailsControlsElement, prevDetailsControlsElement);
       remove(prevDetailsControlsElement);
-    } else {
-      this.#commentsPresenter = new CommentsPresenter(this.#detailsBottom, this.#movieComments);
 
-      render(this.#details, this.#container, 'afterend');
-      render(this.#detailsForm, this.#details.element);
-
-      render(this.#detailsTop, this.#detailsForm.element);
-      render(this.#detailsClose, this.#detailsTop.element);
-      render(this.#detailsInfoElement, this.#detailsTop.element);
-      render(this.#detailsControlsElement, this.#detailsTop.element);
-
-      render(this.#detailsBottom, this.#detailsForm.element);
-
-      this.#commentsPresenter.init();
-
-      this.#detailsClose.setClickHandler(this. #onClosecButtonClick);
-      document.addEventListener('keydown', this.#onEscKeyDown);
+      this.#commentsPresenter.init(this.#movieCard);
+      return;
     }
+
+    this.#commentsPresenter = new CommentsPresenter(this.#detailsBottom, this.#updateCard, this.#commentsModel);
+
+    render(this.#details, this.#container, 'afterend');
+    render(this.#detailsForm, this.#details.element);
+
+    render(this.#detailsTop, this.#detailsForm.element);
+    render(this.#detailsClose, this.#detailsTop.element);
+    render(this.#detailsInfoElement, this.#detailsTop.element);
+    render(this.#detailsControlsElement, this.#detailsTop.element);
+
+    render(this.#detailsBottom, this.#detailsForm.element);
+
+    this.#commentsPresenter.init(this.#movieCard);
+
+    this.#detailsClose.setClickHandler(this. #onClosecButtonClick);
+    document.addEventListener('keydown', this.#onEscKeyDown);
   }
 
   #onFavoriteLinkClick = () => {
     this.#movieCard.user_details.favorite = !this.#movieCard.user_details.favorite;
-    this.#updateCard(this.#movieCard);
+    this.#updateCard(UserAction.UPDATE_CARD, UpdateType.PATCH, this.#movieCard);
   };
 
   #onAlreadyWatchedClick = () => {
     this.#movieCard.user_details['already_watched'] = !this.#movieCard.user_details.already_watched;
-    this.#updateCard(this.#movieCard);
+    this.#updateCard(UserAction.UPDATE_CARD, UpdateType.PATCH, this.#movieCard);
   };
 
   #onWatchlistClick = () => {
     this.#movieCard.user_details.watchlist = !this.#movieCard.user_details.watchlist;
-    this.#updateCard(this.#movieCard);
+    this.#updateCard(UserAction.UPDATE_CARD, UpdateType.PATCH, this.#movieCard);
   };
 
   #onClosecButtonClick = () => {
@@ -107,6 +113,8 @@ export default class DetailsPresenter {
 
     this.#detailsClose.element.removeEventListener('click',  this.#onClosecButtonClick);
     document.removeEventListener('keydown', this.#onEscKeyDown);
+
+    document.removeEventListener('keydown', this.#commentsPresenter.onEnterKeyDown);
 
     remove(this.#details);
     this.#destroyDetailsPresenter();

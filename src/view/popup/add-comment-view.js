@@ -2,8 +2,10 @@ import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 import {Emoji} from '../../consts';
 
 const BLANK_COMMENT = {
+  'author': null,
   'comment': '',
-  'emotion': null
+  'date': null,
+  'emotion': null,
 };
 
 const createEmojiesTemplate = (emotion) => {
@@ -57,6 +59,22 @@ export default class AddCommentView extends AbstractStatefulView {
 
   static parseCommentToState = (comment) => ({...comment});
 
+  getNewComment() {
+    if(this._state.emotion === null || this._state.comment === '') {
+      return false;
+    }
+
+    let date = new Date();
+    date = date.toISOString();
+
+    return {
+      'author': 'User',
+      'comment': this._state.comment,
+      'date': date,
+      'emotion': this._state.emotion,
+    };
+  }
+
   _restoreHandlers() {
     this.#setInnerHandlers();
   }
@@ -80,4 +98,8 @@ export default class AddCommentView extends AbstractStatefulView {
       comment: evt.target.value,
     });
   };
+
+  reset() {
+    this.updateElement(BLANK_COMMENT);
+  }
 }

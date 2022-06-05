@@ -33,11 +33,11 @@ const generateEmotion = () => {
 let lastId = 1;
 
 const generateCommentInfo = () => ({
-  'id': lastId++,
+  'id': (lastId++).toString(),
   'author': generateAuthor(),
   'comment': generateComment(),
   'date': generateDateTime(),
   'emotion': generateEmotion()
 });
 
-export const commentsInfo = Array.from({length: 15}, generateCommentInfo);
+export const commentsInfo = Array.from({length: 150}, generateCommentInfo);

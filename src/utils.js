@@ -1,3 +1,5 @@
+import {FilterType} from './consts.js';
+
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -65,19 +67,6 @@ const splitArray = (array, childArrayLength) => {
   return newArray;
 };
 
-const updateItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1),
-  ];
-};
 
 const RATINGS = {
   'movie buff': 21,
@@ -103,24 +92,51 @@ const getUserStatus = (cardsData) => {
 
 
 const getFilterStats = (cardsData) => ({
-  'watchlist': cardsData.filter((cardData) => cardData.user_details['watchlist']).length,
-  'history': cardsData.filter((cardData) => cardData.user_details['already_watched']).length,
-  'favorites': cardsData.filter((cardData) => cardData.user_details['favorite']).length,
+  [FilterType.WATCHLIST]: cardsData.filter((cardData) => cardData.user_details['watchlist']).length,
+  [FilterType.HISTORY]: cardsData.filter((cardData) => cardData.user_details['already_watched']).length,
+  [FilterType.FAVORITES]: cardsData.filter((cardData) => cardData.user_details['favorite']).length,
 });
 
-const sortCardsByDate = (cardsData) => cardsData.sort((a, b) => {
-  const dateA = Date.parse(a.film_info.release.date);
-  const dateB = Date.parse(b.film_info.release.date);
+const filterCards = (cards, selectedFilter) => {
+  const filteredCards = [...cards];
 
-  return  dateB - dateA;
-});
+  switch (selectedFilter) {
+    case FilterType.ALL:
+      return filteredCards;
+    case FilterType.WATCHLIST:
+      return filteredCards.filter((cardData) => cardData.user_details['watchlist']);
+    case FilterType.HISTORY:
+      return filteredCards.filter((cardData) => cardData.user_details['already_watched']);
+    case FilterType.FAVORITES:
+      return filteredCards.filter((cardData) => cardData.user_details['favorite']);
+  }
+};
 
-const sortCardsByRating = (cardsData) => cardsData.sort((a, b) => {
-  const rateA = a.film_info.total_rating;
-  const rateB = b.film_info.total_rating;
+const sortCardsByDate = (cardsData) => {
+  const sortedCardsData = [...cardsData];
 
-  return rateB - rateA;
-});
+  sortedCardsData.sort((a, b) => {
+    const dateA = Date.parse(a.film_info.release.date);
+    const dateB = Date.parse(b.film_info.release.date);
+
+    return  dateB - dateA;
+  });
+
+  return sortedCardsData;
+};
+
+const sortCardsByRating = (cardsData) => {
+  const sortedCardsData = [...cardsData];
+
+  sortedCardsData.sort((a, b) => {
+    const rateA = a.film_info.total_rating;
+    const rateB = b.film_info.total_rating;
+
+    return rateB - rateA;
+  });
+
+  return sortedCardsData;
+};
 
 
-export {getRandomInteger, getRandomDate, shuffleArray, getTimeFromIso, splitArray, emotions, updateItem, getUserStatus, getFilterStats, sortCardsByDate, sortCardsByRating};
+export {getRandomInteger, getRandomDate, shuffleArray, getTimeFromIso, splitArray, emotions, getUserStatus, getFilterStats, filterCards, sortCardsByDate, sortCardsByRating};

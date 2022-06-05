@@ -2,7 +2,8 @@ import FilmCardView from '../view/film-card-view';
 
 import DetailsPresenter from './details-presenter';
 
-import {remove, render, replace} from '../framework/render.js';
+import {remove, render, replace} from '../framework/render';
+import {UserAction, UpdateType, FilterType} from '../consts';
 
 
 export default class FilmCardPresenter {
@@ -14,14 +15,16 @@ export default class FilmCardPresenter {
   #cardData = {};
   #updateCard  = null;
   #commentsModel = null;
+  #filterModel = null;
   #closeAllPopups = null;
 
   #detailsPresenter = null;
 
-  constructor(filmCardContainer, updateCard, commentsModel, closeAllPopups) {
+  constructor(filmCardContainer, updateCard, commentsModel, filterModel, closeAllPopups) {
     this.#filmCardContainer = filmCardContainer;
     this.#updateCard = updateCard;
     this.#commentsModel = commentsModel;
+    this.#filterModel = filterModel;
     this.#closeAllPopups = closeAllPopups;
   }
 
@@ -66,24 +69,26 @@ export default class FilmCardPresenter {
     this.#closeAllPopups();
     document.body.classList.add('hide-overflow');
 
-    const comments = this.#commentsModel.getCommentsInfoByIds(this.#cardData.comments);
-    this.#detailsPresenter = new DetailsPresenter(this.#siteFooterElement, this.#destroyDetailsPresenter, this.#updateCard);
-    this.#detailsPresenter.init(this.#cardData, comments);
+    this.#detailsPresenter = new DetailsPresenter(this.#siteFooterElement, this.#destroyDetailsPresenter, this.#updateCard, this.#commentsModel);
+    this.#detailsPresenter.init(this.#cardData);
   };
 
   #onFavoriteLinkClick = () => {
+    const updateType = this.#filterModel.filter === FilterType.ALL? UpdateType.PATCH : UpdateType.MINOR;
     this.#cardData.user_details.favorite = !this.#cardData.user_details.favorite;
-    this.#updateCard(this.#cardData);
+    this.#updateCard(UserAction.UPDATE_CARD, updateType, this.#cardData);
   };
 
   #onAlreadyWatchedClick = () => {
+    const updateType = this.#filterModel.filter === FilterType.ALL? UpdateType.PATCH : UpdateType.MINOR;
     this.#cardData.user_details['already_watched'] = !this.#cardData.user_details.already_watched;
-    this.#updateCard(this.#cardData);
+    this.#updateCard(UserAction.UPDATE_CARD, updateType, this.#cardData);
   };
 
   #onWatchlistClick = () => {
+    const updateType = this.#filterModel.filter === FilterType.ALL? UpdateType.PATCH : UpdateType.MINOR;
     this.#cardData.user_details.watchlist = !this.#cardData.user_details.watchlist;
-    this.#updateCard(this.#cardData);
+    this.#updateCard(UserAction.UPDATE_CARD, updateType, this.#cardData);
   };
 
   destroy() {
