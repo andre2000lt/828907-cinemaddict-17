@@ -1,36 +1,26 @@
-import {commentsInfo} from '../mock/comment.js';
-
 export default class CommentsModel{
-  #commentsInfo = null;
+  #commentsApiService = null;
 
-  constructor() {
-    this.#commentsInfo = [...commentsInfo];
+  constructor(commentsApiService) {
+    this.#commentsApiService = commentsApiService;
   }
 
-  get comments() {
-    return this.#commentsInfo;
+  async getComments(filmId) {
+    let comments;
+    try {
+      comments = await this.#commentsApiService.getComments(filmId);
+    } catch(err) {
+      comments = [];
+    }
+
+    return comments;
   }
 
-  getCommentsInfoByIds(ids) {
-    return this.#commentsInfo.filter((elem) => ids.includes(elem.id));
+  addComment() {
+
   }
 
-  generateNewCommentId() {
-    const lastId =  this.#commentsInfo[this.#commentsInfo.length - 1].id;
-    return (+lastId + 1).toString();
-  }
+  deleteComment() {
 
-  addComment(comment) {
-    this.#commentsInfo.push(comment);
-  }
-
-  deleteComment(commentId) {
-    const index = this.#commentsInfo
-      .findIndex((comment) => comment.id === commentId);
-
-    this.#commentsInfo = [
-      ...this.#commentsInfo.slice(0, index),
-      ...this.#commentsInfo.slice(index + 1),
-    ];
   }
 }

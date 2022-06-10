@@ -1,4 +1,5 @@
 import AllListsWrapperView from '../view/all-lists-wrapper-view';
+import LoadingView from '../view/loading-view';
 import MainListWrapperView from '../view/main-list-wrapper-view';
 import TopListWrapperView from '../view/top-list-wrapper-view';
 import MostCommentedListWrapperView from '../view/most-commented-list-wrapper-view';
@@ -14,15 +15,23 @@ import FilterPresenter from './filter-presenter';
 
 import FilmCardPresenter from './film-card-presenter';
 
-import {remove, render} from '../framework/render.js';
+import {remove, render, RenderPosition} from '../framework/render.js';
 import {sortCardsByDate, sortCardsByRating, filterCards} from '../utils.js';
 import {ListType, SortType, UpdateType, UserAction} from '../consts.js';
+
+// import TasksApiService from '../tasks-api-service.js';
+
+// const AUTHORIZATION = 'Basic hS2sfScffcl1sa2j';
+// const END_POINT = 'https://17.ecmascript.pages.academy/task-manager';
 
 const FILM_COUNT_PER_STEP = 5;
 
 
 export default class FilmsListPresenter {
   #container = null;
+
+  #isLoading = true;
+  #isFilmListEmpty = true;
 
   #moviesModel = {};
   #renderedFilmCount = 0;
@@ -43,15 +52,16 @@ export default class FilmsListPresenter {
 
 
   #allListsWrapperView = new AllListsWrapperView();
-  #mainListWrapperView = new MainListWrapperView();
-  #topListWrapperView = new TopListWrapperView();
-  #mostCommentedListWrapperView = new MostCommentedListWrapperView();
+  #loadingView = new LoadingView();
+  #mainListWrapperView = null;
+  #topListWrapperView = null;
+  #mostCommentedListWrapperView = null;
   #showMoreButtonView = new ShowMoreView();
 
   #filmLists = {
-    [ListType.MAIN]: new FilmsListView(),
-    [ListType.TOP]: new FilmsListView(),
-    [ListType.MOST_COMMENTED]: new FilmsListView()
+    [ListType.MAIN]: null,
+    [ListType.TOP]: null,
+    [ListType.MOST_COMMENTED]: null
   };
 
   #filterPresenter = null;
@@ -71,18 +81,8 @@ export default class FilmsListPresenter {
 
   init() {
     this.#renderFilter();
-    this.#renderSort();
 
     render(this.#allListsWrapperView, this.#container);
-    render(this.#mainListWrapperView, this.#allListsWrapperView.element);
-    render(this.#filmLists[ListType.MAIN], this.#mainListWrapperView.element);
-
-    this.#renderFilmList(Math.min(this.moviesDataCards.length, FILM_COUNT_PER_STEP));
-
-    this.#renderTopList();
-
-    this.#renderMostCommentedList();
-
   }
 
   get moviesDataCards() {
@@ -98,6 +98,10 @@ export default class FilmsListPresenter {
     return filteredCards;
   }
 
+  #renderLoading() {
+    render(this.#loadingView, this.#allListsWrapperView.element, RenderPosition.AFTERBEGIN);
+  }
+
   #renderFilter() {
     this.#filterPresenter = new FilterPresenter(this.#container, this.#filterModel, this.#moviesModel);
     this.#filterPresenter.init();
@@ -106,7 +110,7 @@ export default class FilmsListPresenter {
   #renderSort() {
     this.#sortView = new SortView(this.#currentSortType);
     this.#sortView.setSortTypeChangeHandler(this.#onSortChange);
-    render(this.#sortView, this.#container);
+    render(this.#sortView, this.#allListsWrapperView.element, RenderPosition.BEFOREBEGIN);
   }
 
   #onSortChange = (sortBy) => {
@@ -115,13 +119,12 @@ export default class FilmsListPresenter {
     }
 
     this.#currentSortType = sortBy;
-    this.#sortView.changeSortType(this.#currentSortType);
-    this.#clearFilmList();
-    this.#renderFilmList(FILM_COUNT_PER_STEP);
+    this.#clearBoard();
+    this.#renderBoard(FILM_COUNT_PER_STEP);
   };
 
-  #renderNoFilmsElement() {
-    render(new NofilmsView(this.#filterModel.filter), this.#filmLists[ListType.MAIN].element);
+  #renderNoFilmsElement(container) {
+    render(new NofilmsView(this.#filterModel.filter), container.element);
   }
 
   #handleViewAction = (actionType, updateType, update) => {
@@ -150,11 +153,16 @@ export default class FilmsListPresenter {
 
         break;
       case UpdateType.MINOR:
-        this.#clearFilmList();
-        this.#renderFilmList(FILM_COUNT_PER_STEP);
+        this.#clearBoard();
+        this.#renderBoard();
         break;
       case UpdateType.MAJOR:
         // - обновить всю доску (например, при переключении фильтра)
+        break;
+      case UpdateType.INIT:
+        this.#isLoading = false;
+        remove(this.#loadingView);
+        this.#renderBoard();
         break;
     }
   };
@@ -187,12 +195,38 @@ export default class FilmsListPresenter {
     this.#filmCardPresenters[list].set(cardData.id, filmCardPresenter);
   }
 
-  #renderFilmList(to) {
-    if (this.moviesDataCards.length === 0) {
-      this.#renderNoFilmsElement();
+  #renderBoard() {
+    if (this.#isLoading) {
+      this.#renderLoading();
       return;
     }
 
+    this.#isFilmListEmpty = this.moviesDataCards.length === 0;
+
+    this.#mainListWrapperView = new MainListWrapperView(this.#isFilmListEmpty);
+    render(this.#mainListWrapperView, this.#allListsWrapperView.element);
+
+    if (this.#isFilmListEmpty) {
+      this.#renderNoFilmsElement(this.#mainListWrapperView);
+      return;
+    }
+
+    this.#renderSort();
+
+    this.#filmLists[ListType.MAIN] = new FilmsListView();
+    render(this.#filmLists[ListType.MAIN], this.#mainListWrapperView.element);
+
+    this.#renderFilmList(Math.min(this.moviesDataCards.length, FILM_COUNT_PER_STEP));
+
+    this.#renderTopList();
+
+    this.#renderMostCommentedList();
+
+    // this.#renderLoading();
+
+  }
+
+  #renderFilmList(to) {
     this.moviesDataCards
       .slice(this.#renderedFilmCount, to)
       .forEach((filmCard) => {
@@ -207,6 +241,8 @@ export default class FilmsListPresenter {
   }
 
   #renderTopList() {
+    this.#topListWrapperView = new TopListWrapperView();
+    this.#filmLists[ListType.TOP] = new FilmsListView();
     render(this.#topListWrapperView, this.#allListsWrapperView.element);
     render(this.#filmLists['top'], this.#topListWrapperView.element);
 
@@ -216,6 +252,8 @@ export default class FilmsListPresenter {
   }
 
   #renderMostCommentedList() {
+    this.#mostCommentedListWrapperView = new MostCommentedListWrapperView();
+    this.#filmLists[ListType.MOST_COMMENTED] = new FilmsListView();
     render(this.#mostCommentedListWrapperView, this.#allListsWrapperView.element);
     render(this.#filmLists[ListType.MOST_COMMENTED], this.#mostCommentedListWrapperView.element);
 
@@ -224,10 +262,24 @@ export default class FilmsListPresenter {
     }
   }
 
-  #clearFilmList() {
-    this.#filmCardPresenters[ListType.MAIN]
-      .forEach((filmCard) => {filmCard.destroy(); });
-    this.#filmCardPresenters[ListType.MAIN].clear();
+  #clearBoard() {
+    remove(this.#sortView);
+    remove(this.#mainListWrapperView);
+    remove(this.#filmLists[ListType.MAIN]);
+
+    remove(this.#topListWrapperView);
+    remove(this.#filmLists[ListType.TOP]);
+
+    remove(this.#mostCommentedListWrapperView);
+    remove(this.#filmLists[ListType.MOST_COMMENTED]);
+
+    for (const listName in this.#filmCardPresenters) {
+      this.#filmCardPresenters[listName]
+        .forEach((cardPresenter) => cardPresenter.destroy());
+
+      this.#filmCardPresenters[listName].clear();
+    }
+
     this.#renderedFilmCount = 0;
     remove(this.#showMoreButtonView);
   }

@@ -1,23 +1,23 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatetfulView from '../framework/view/abstract-stateful-view.js';
 import {SortType} from '../consts.js';
 
-const createSortTemplate = (currentSortType) => `<ul class="sort">
-<li><a href="#" class="sort__button ${currentSortType === SortType.DEFAULT ? 'sort__button--active' : ''}" data-sort-type=${SortType.DEFAULT}>Sort by default</a></li>
-<li><a href="#" class="sort__button ${currentSortType === SortType.DATE ? 'sort__button--active' : ''}" data-sort-type=${SortType.DATE}>Sort by date</a></li>
-<li><a href="#" class="sort__button ${currentSortType === SortType.RATING ? 'sort__button--active' : ''}" data-sort-type=${SortType.RATING}>Sort by rating</a></li>
+const createSortTemplate = (state) => `<ul class="sort">
+<li><a href="#" class="sort__button ${state.sortType === SortType.DEFAULT ? 'sort__button--active' : ''}" data-sort-type=${SortType.DEFAULT}>Sort by default</a></li>
+<li><a href="#" class="sort__button ${state.sortType === SortType.DATE ? 'sort__button--active' : ''}" data-sort-type=${SortType.DATE}>Sort by date</a></li>
+<li><a href="#" class="sort__button ${state.sortType === SortType.RATING ? 'sort__button--active' : ''}" data-sort-type=${SortType.RATING}>Sort by rating</a></li>
 </ul>`;
 
-export default class SortView extends AbstractView {
-  #currentSortType = null;
-
+export default class SortView extends AbstractStatetfulView {
   constructor(currentSortType) {
     super();
-    this.#currentSortType = currentSortType;
+    this._state = SortView.parseParamsToState(currentSortType);
   }
 
   get template() {
-    return createSortTemplate(this.#currentSortType);
+    return createSortTemplate(this._state);
   }
+
+  static parseParamsToState = (sortType) => ({sortType: sortType});
 
   setSortTypeChangeHandler = (callback) => {
     this._callback.sortTypeChange = callback;
@@ -34,14 +34,12 @@ export default class SortView extends AbstractView {
     this._callback.sortTypeChange(evt.target.dataset.sortType);
   };
 
+  _restoreHandlers() {
+    this.setSortTypeChangeHandler(this._callback.sortTypeChange);
+  }
+
   changeSortType(currentSortType) {
-    this.#currentSortType = currentSortType;
-    this.element.querySelectorAll('.sort__button')
-      .forEach((element) => {
-        element.classList.remove('sort__button--active');
-        if (element.dataset.sortType === currentSortType) {
-          element.classList.add('sort__button--active');
-        }
-      });
+    const update = SortView.parseParamsToState(currentSortType);
+    this.updateElement(update);
   }
 }

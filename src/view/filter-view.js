@@ -1,9 +1,9 @@
-import AbstractView from '../framework/view/abstract-view.js';
+import AbstractStatetfulView from '../framework/view/abstract-stateful-view.js';
 import {getFilterStats} from '../utils.js';
 import {FilterType} from '../consts.js';
 
-const createMenuTemplate = (cardsData, currentFilter) => {
-  const {watchlist, history, favorites} = getFilterStats(cardsData);
+const createMenuTemplate = (state) => {
+  const {watchlist, history, favorites, currentFilter} = state;
 
   return (
     `<nav class="main-navigation">
@@ -16,18 +16,21 @@ const createMenuTemplate = (cardsData, currentFilter) => {
 };
 
 
-export default class FilterView extends AbstractView {
-  #cardsData = null;
-  #currentFilter = null;
+export default class FilterView extends AbstractStatetfulView {
   constructor(cardsData, currentFilter){
     super();
-    this.#cardsData = cardsData;
-    this.#currentFilter = currentFilter;
+    this._state = FilterView.parseParamsToState(cardsData, currentFilter);
   }
 
   get template() {
-    return createMenuTemplate(this.#cardsData, this.#currentFilter);
+    return createMenuTemplate(this._state);
   }
+
+  static parseParamsToState = (cardsData, currentFilter) => {
+    const state = {...getFilterStats(cardsData)};
+    state.currentFilter = currentFilter;
+    return state;
+  };
 
   setFilterTypeChangeHandler = (callback) => {
     this._callback.filterTypeChange = callback;
@@ -42,4 +45,13 @@ export default class FilterView extends AbstractView {
     evt.preventDefault();
     this._callback.filterTypeChange(evt.target.dataset.filterType);
   };
+
+  _restoreHandlers() {
+    this.setFilterTypeChangeHandler(this._callback.filterTypeChange);
+  }
+
+  updateFilter(cardsData, currentFilter) {
+    const update = FilterView.parseParamsToState(cardsData, currentFilter);
+    this.updateElement(update);
+  }
 }

@@ -1,5 +1,5 @@
 import FilterView from '../view/filter-view';
-import {render, replace, remove, RenderPosition} from '../framework/render.js';
+import {render, RenderPosition} from '../framework/render.js';
 import {UpdateType} from '../consts.js';
 
 export default class FilterPresenter {
@@ -19,20 +19,14 @@ export default class FilterPresenter {
   }
 
   init() {
-    const prevFilterView = this.#filterView;
     this.#filterView = new FilterView(this.#moviesModel.moviesDataCards, this.#filterModel.filter);
     this.#filterView.setFilterTypeChangeHandler(this.#onFilterTypeChange);
 
-    if (prevFilterView === null) {
-      render(this.#filterView, this.#filterContainer, RenderPosition.AFTERBEGIN);
-    } else {
-      replace(this.#filterView, prevFilterView);
-      remove(prevFilterView);
-    }
+    render(this.#filterView, this.#filterContainer, RenderPosition.AFTERBEGIN);
   }
 
   #onModelDataChange = () => {
-    this.init();
+    this.#filterView.updateFilter(this.#moviesModel.moviesDataCards, this.#filterModel.filter);
   };
 
   #onFilterTypeChange = (selectedFilter) => {

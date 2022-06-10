@@ -32,6 +32,7 @@ export default class DetailsPresenter {
   // data
   #movieCard = null;
   #commentsModel = null;
+  #movieComments = [];
 
   // presener
   #commentsPresenter = null;
@@ -43,9 +44,9 @@ export default class DetailsPresenter {
     this.#commentsModel = commentsModel;
   }
 
-  init(movieCard) {
+  init(movieCard, movieComments) {
     this.#movieCard = movieCard;
-
+    this.#movieComments = movieComments;
 
     const prevDetailsControlsElement = this.#detailsControlsElement;
 
@@ -60,7 +61,7 @@ export default class DetailsPresenter {
       replace(this.#detailsControlsElement, prevDetailsControlsElement);
       remove(prevDetailsControlsElement);
 
-      this.#commentsPresenter.init(this.#movieCard);
+      this.#commentsPresenter.init(this.#movieCard, this.#movieComments);
       return;
     }
 
@@ -76,7 +77,7 @@ export default class DetailsPresenter {
 
     render(this.#detailsBottom, this.#detailsForm.element);
 
-    this.#commentsPresenter.init(this.#movieCard);
+    this.#commentsPresenter.init(this.#movieCard, this.#movieComments);
 
     this.#detailsClose.setClickHandler(this. #onClosecButtonClick);
     document.addEventListener('keydown', this.#onEscKeyDown);

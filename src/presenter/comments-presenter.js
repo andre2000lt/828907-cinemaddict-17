@@ -27,9 +27,9 @@ export default class CommentsPresenter {
     document.addEventListener('keydown', this.onEnterKeyDown);
   }
 
-  init(movieCard) {
+  init(movieCard, comments) {
     this.#movieCard = movieCard;
-    this.#comments = this.#commentsModel.getCommentsInfoByIds(this.#movieCard.comments);
+    this.#comments = comments;
 
 
     const prevCommentsWrapper = this.#commentsWrapper;

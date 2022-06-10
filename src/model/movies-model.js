@@ -1,12 +1,23 @@
+import { UpdateType } from '../consts.js';
 import Observable from '../framework/observable.js';
-import {moviesDataCards} from '../mock/movie.js';
 
 export default class MoviesModel extends Observable {
-  #moviesDataCards = null;
+  #moviesDataCards = [];
+  #cardsApiService = null;
 
-  constructor() {
+  constructor(cardsApiService) {
     super();
-    this.#moviesDataCards = [...moviesDataCards];
+    this.#cardsApiService = cardsApiService;
+  }
+
+  async init() {
+    try {
+      this.#moviesDataCards  = await this.#cardsApiService.movies;
+    } catch(err) {
+      this.#moviesDataCards = [];
+    }
+
+    this._notify(UpdateType.INIT);
   }
 
   get moviesDataCards() {
@@ -14,11 +25,24 @@ export default class MoviesModel extends Observable {
   }
 
 
-  updateCard = (updateType, update) => {
+  async updateCard (updateType, update) {
     const index = this.#moviesDataCards.findIndex((card) => card.id === update.id);
+
 
     if (index === -1) {
       throw new Error('Can\'t update unexisting card');
+    }
+
+    try {
+      const card = await this.#cardsApiService.updateCard(update);
+      this.#moviesDataCards = [
+        ...this.#moviesDataCards.slice(0, index),
+        card,
+        ...this.#moviesDataCards.slice(index + 1),
+      ];
+      this._notify(updateType, card);
+    } catch(err) {
+      throw new Error(err);
     }
 
     this.#moviesDataCards = [
@@ -28,7 +52,7 @@ export default class MoviesModel extends Observable {
     ];
 
     this._notify(updateType, update);
-  };
+  }
 
   addCard = (updateType, update) => {
     this.#moviesDataCards = [

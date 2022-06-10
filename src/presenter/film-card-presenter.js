@@ -15,6 +15,7 @@ export default class FilmCardPresenter {
   #cardData = {};
   #updateCard  = null;
   #commentsModel = null;
+  #movieComments = [];
   #filterModel = null;
   #closeAllPopups = null;
 
@@ -66,11 +67,16 @@ export default class FilmCardPresenter {
   };
 
   #onCardLinkClick = () => {
-    this.#closeAllPopups();
-    document.body.classList.add('hide-overflow');
+    const comments = this.#commentsModel.getComments(this.#cardData.id);
+    comments.then((movieComments) => {
+      this.#movieComments = movieComments;
+      this.#closeAllPopups();
+      document.body.classList.add('hide-overflow');
 
-    this.#detailsPresenter = new DetailsPresenter(this.#siteFooterElement, this.#destroyDetailsPresenter, this.#updateCard, this.#commentsModel);
-    this.#detailsPresenter.init(this.#cardData);
+      this.#detailsPresenter = new DetailsPresenter(this.#siteFooterElement, this.#destroyDetailsPresenter, this.#updateCard, this.#commentsModel);
+      this.#detailsPresenter.init(this.#cardData, this.#movieComments);
+    });
+
   };
 
   #onFavoriteLinkClick = () => {
@@ -100,7 +106,6 @@ export default class FilmCardPresenter {
   }
 
   updateDetailsPresenter() {
-    const comments = this.#commentsModel.getCommentsInfoByIds(this.#cardData.comments);
-    this.#detailsPresenter.init(this.#cardData, comments);
+    this.#detailsPresenter.init(this.#cardData, this.#movieComments);
   }
 }
