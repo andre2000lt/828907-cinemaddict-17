@@ -1,5 +1,7 @@
 import AbstractView from '../framework/view/abstract-view.js';
 
+import {cropText} from '../utils.js';
+
 const createFilmCardTemplate = (card) => {
   const {title, total_rating:rating, description, poster, runtime, genre} = card.film_info;
   const {watchlist, already_watched:alreadyWatched, favorite} = card.user_details;
@@ -15,6 +17,8 @@ const createFilmCardTemplate = (card) => {
   const alreadyWatchedClass = alreadyWatched ? 'film-card__controls-item--active' : '';
   const favoriteClass = favorite ? 'film-card__controls-item--active' : '';
 
+  const croppedDescription = cropText(description);
+
   const commentsCount = card.comments.length;
 
   return (
@@ -28,7 +32,7 @@ const createFilmCardTemplate = (card) => {
             <span class="film-card__genre">${genre[0]}</span>
           </p>
           <img src="${poster}" alt="" class="film-card__poster">
-          <p class="film-card__description">${description}</p>
+          <p class="film-card__description">${croppedDescription}</p>
           <span class="film-card__comments">${commentsCount} comments</span>
         </a>
         <div class="film-card__controls">

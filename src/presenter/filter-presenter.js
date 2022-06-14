@@ -30,6 +30,6 @@ export default class FilterPresenter {
   };
 
   #onFilterTypeChange = (selectedFilter) => {
-    this.#filterModel.setFilter(UpdateType.MINOR, selectedFilter);
+    this.#filterModel.setFilter(UpdateType.CHANGE_FILTER, selectedFilter);
   };
 }

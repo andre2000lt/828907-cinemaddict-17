@@ -15,11 +15,12 @@ export default class FilmCardPresenter {
   #cardData = {};
   #updateCard  = null;
   #commentsModel = null;
-  #movieComments = [];
   #filterModel = null;
   #closeAllPopups = null;
 
   #detailsPresenter = null;
+
+  #commentsLoaded = null;
 
   constructor(filmCardContainer, updateCard, commentsModel, filterModel, closeAllPopups) {
     this.#filmCardContainer = filmCardContainer;
@@ -31,6 +32,7 @@ export default class FilmCardPresenter {
 
   init(cardData) {
     this.#cardData = cardData;
+    this.#commentsLoaded = this.#commentsModel.getComments(this.#cardData.id);
 
     const prevfilmCardView = this.#filmCardView;
 
@@ -67,16 +69,13 @@ export default class FilmCardPresenter {
   };
 
   #onCardLinkClick = () => {
-    const comments = this.#commentsModel.getComments(this.#cardData.id);
-    comments.then((movieComments) => {
-      this.#movieComments = movieComments;
-      this.#closeAllPopups();
+    this.#closeAllPopups();
+    this.#commentsLoaded.then((comments) => {
       document.body.classList.add('hide-overflow');
 
       this.#detailsPresenter = new DetailsPresenter(this.#siteFooterElement, this.#destroyDetailsPresenter, this.#updateCard, this.#commentsModel);
-      this.#detailsPresenter.init(this.#cardData, this.#movieComments);
+      this.#detailsPresenter.init(this.#cardData, comments);
     });
-
   };
 
   #onFavoriteLinkClick = () => {
@@ -106,6 +105,8 @@ export default class FilmCardPresenter {
   }
 
   updateDetailsPresenter() {
-    this.#detailsPresenter.init(this.#cardData, this.#movieComments);
+    this.#commentsLoaded.then((comments) => {
+      this.#detailsPresenter.init(this.#cardData, comments);
+    });
   }
 }

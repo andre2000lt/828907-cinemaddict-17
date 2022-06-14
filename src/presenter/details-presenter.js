@@ -65,7 +65,7 @@ export default class DetailsPresenter {
       return;
     }
 
-    this.#commentsPresenter = new CommentsPresenter(this.#detailsBottom, this.#updateCard, this.#commentsModel);
+    this.#commentsPresenter = new CommentsPresenter(this.#detailsBottom, this.#commentsModel);
 
     render(this.#details, this.#container, 'afterend');
     render(this.#detailsForm, this.#details.element);

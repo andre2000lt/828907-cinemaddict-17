@@ -35,9 +35,13 @@ const getTimeFromIso = (isoDate) => {
 
   if (diff < dayCount[1]) {
     return (dateNow.getDate === commDate.getDate) ? 'Today' : '1 day ago';
-  } else if (diff < dayCount[2]) {
+  }
+
+  if (diff < dayCount[2]) {
     return '2 days ago';
-  } else if (diff < dayCount[3]) {
+  }
+
+  if (diff < dayCount[3]) {
     return '3 days ago';
   }
 
@@ -138,5 +142,13 @@ const sortCardsByRating = (cardsData) => {
   return sortedCardsData;
 };
 
+const cropText = (text, symbolCount = 140) => {
+  if (text.length > symbolCount) {
+    text = `${text.slice(0, symbolCount - 1)}...`;
+  }
 
-export {getRandomInteger, getRandomDate, shuffleArray, getTimeFromIso, splitArray, emotions, getUserStatus, getFilterStats, filterCards, sortCardsByDate, sortCardsByRating};
+  return text;
+};
+
+
+export {getRandomInteger, getRandomDate, shuffleArray, getTimeFromIso, splitArray, emotions, getUserStatus, getFilterStats, filterCards, sortCardsByDate, sortCardsByRating, cropText};

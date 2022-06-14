@@ -7,12 +7,12 @@ export default class FilmsListPresenter {
   #container = null;
 
 
-  constructor(container, counter) {
+  constructor(container) {
     this.#container = container;
-    this.#stats = new StatsView(counter);
   }
 
-  init() {
+  init(counter) {
+    this.#stats = new StatsView(counter);
     render(this.#stats, this.#container);
   }
 }

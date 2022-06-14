@@ -30,6 +30,9 @@ const UpdateType = {
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
   INIT: 'INIT',
+  DELETE_COMMENT: 'DELETE_COMMENT',
+  ADD_COMMENT: 'ADD_COMMENT',
+  CHANGE_FILTER: 'CHANGE_FILTER',
 };
 
 const FilterType = {

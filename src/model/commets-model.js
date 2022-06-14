@@ -1,7 +1,11 @@
-export default class CommentsModel{
+import Observable from '../framework/observable.js';
+import {UpdateType} from '../consts.js';
+
+export default class CommentsModel extends Observable {
   #commentsApiService = null;
 
   constructor(commentsApiService) {
+    super();
     this.#commentsApiService = commentsApiService;
   }
 
@@ -16,11 +20,23 @@ export default class CommentsModel{
     return comments;
   }
 
-  addComment() {
+  async addComment(comment, filmId) {
+    try {
+      const response = await this.#commentsApiService.addComment(comment, filmId);
 
+      this._notify(UpdateType.ADD_COMMENT, response.movie.id);
+    } catch(err) {
+      throw new Error(err);
+    }
   }
 
-  deleteComment() {
+  async deleteComment(commentId, movieId) {
+    try {
+      await this.#commentsApiService.deleteComment(commentId);
 
+      this._notify(UpdateType.DELETE_COMMENT, movieId);
+    } catch(err) {
+      throw new Error(err);
+    }
   }
 }

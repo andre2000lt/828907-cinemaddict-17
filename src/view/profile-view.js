@@ -1,27 +1,22 @@
-import AbstractView from '../framework/view/abstract-view.js';
-import {getUserStatus} from '../utils.js';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view.js';
 
-const createProfileTemplate = (cardsData) => {
-  const status = getUserStatus(cardsData);
+const createProfileTemplate = (state) =>
+  `<section class="header__profile profile">
+  <p class="profile__rating">${state.status}</p>
+  <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
+  </section>`;
 
-  return (
-    `<section class="header__profile profile">
-    <p class="profile__rating">${status}</p>
-    <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-    </section>`
-  );
-};
-
-
-export default class ProfileView extends AbstractView {
-  #cardsData = null;
-
-  constructor(cardsData) {
+export default class ProfileView extends AbstractStatefulView {
+  constructor(status) {
     super();
-    this.#cardsData = cardsData;
+    this._state = {...status};
   }
 
   get template() {
-    return createProfileTemplate(this.#cardsData);
+    return createProfileTemplate(this._state);
+  }
+
+  _restoreHandlers() {
+
   }
 }

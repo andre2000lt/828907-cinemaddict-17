@@ -2,9 +2,7 @@ import AbstractStatefulView from '../../framework/view/abstract-stateful-view';
 import {Emoji} from '../../consts';
 
 const BLANK_COMMENT = {
-  'author': null,
   'comment': '',
-  'date': null,
   'emotion': null,
 };
 
@@ -23,14 +21,14 @@ const createEmojiesTemplate = (emotion) => {
 };
 
 const createAddCommentTemplate = (commentState) => {
-  const {comment, emotion} = commentState;
+  const {comment, emotion, isSaving} = commentState;
   const emotionSrc = emotion ? `<img src="images/emoji/${emotion}.png" width="55" height="55" alt="emoji-smile"></img>`: '';
-
+  const disabled = isSaving? 'disabled' : '';
   return (`<div class="film-details__new-comment">
   <div class="film-details__add-emoji-label">${emotionSrc}</div>
 
   <label class="film-details__comment-label">
-    <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${comment}</textarea>
+    <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment" ${disabled}>${comment}</textarea>
   </label>
 
   <div class="film-details__emoji-list">
@@ -57,20 +55,15 @@ export default class AddCommentView extends AbstractStatefulView {
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#commentInputHandler);
   };
 
-  static parseCommentToState = (comment) => ({...comment});
+  static parseCommentToState = (comment) => ({...comment, isSaving: false});
 
   getNewComment() {
     if(this._state.emotion === null || this._state.comment === '') {
       return false;
     }
 
-    let date = new Date();
-    date = date.toISOString();
-
     return {
-      'author': 'User',
       'comment': this._state.comment,
-      'date': date,
       'emotion': this._state.emotion,
     };
   }
@@ -100,6 +93,6 @@ export default class AddCommentView extends AbstractStatefulView {
   };
 
   reset() {
-    this.updateElement(BLANK_COMMENT);
+    this.updateElement({...BLANK_COMMENT, isSaving: false});
   }
 }

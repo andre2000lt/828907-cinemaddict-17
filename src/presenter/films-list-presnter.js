@@ -19,13 +19,7 @@ import {remove, render, RenderPosition} from '../framework/render.js';
 import {sortCardsByDate, sortCardsByRating, filterCards} from '../utils.js';
 import {ListType, SortType, UpdateType, UserAction} from '../consts.js';
 
-// import TasksApiService from '../tasks-api-service.js';
-
-// const AUTHORIZATION = 'Basic hS2sfScffcl1sa2j';
-// const END_POINT = 'https://17.ecmascript.pages.academy/task-manager';
-
 const FILM_COUNT_PER_STEP = 5;
-
 
 export default class FilmsListPresenter {
   #container = null;
@@ -67,7 +61,6 @@ export default class FilmsListPresenter {
   #filterPresenter = null;
   #sortView = null;
 
-
   constructor(container, moviesModel, commentsModel) {
     this.#container = container;
     this.#moviesModel = moviesModel;
@@ -76,6 +69,7 @@ export default class FilmsListPresenter {
 
     this.#moviesModel.addObserver(this.#onModelChange);
     this.#filterModel.addObserver(this.#onModelChange);
+    this.#commentsModel.addObserver(this.#onModelChange);
   }
 
 
@@ -127,18 +121,19 @@ export default class FilmsListPresenter {
     render(new NofilmsView(this.#filterModel.filter), container.element);
   }
 
-  #handleViewAction = (actionType, updateType, update) => {
+  #handleViewAction =   async (actionType, updateType, update) => {
     switch (actionType) {
       case UserAction.UPDATE_CARD:
-        this.#moviesModel.updateCard(updateType, update);
+        await this.#moviesModel.updateCard(updateType, update);
         break;
       case UserAction.ADD_CARD:
-        this.#moviesModel.addCard(updateType, update);
+        await this.#moviesModel.addCard(updateType, update);
         break;
       case UserAction.DELETE_CARD:
-        this.#moviesModel.deleteCard(updateType, update);
+        await this.#moviesModel.deleteCard(updateType, update);
         break;
     }
+
   };
 
   #onModelChange = (updateType, updatedCardData) => {
@@ -156,13 +151,19 @@ export default class FilmsListPresenter {
         this.#clearBoard();
         this.#renderBoard();
         break;
-      case UpdateType.MAJOR:
-        // - обновить всю доску (например, при переключении фильтра)
+      case UpdateType.CHANGE_FILTER:
+        this.#currentSortType = SortType.DEFAULT;
+        this.#clearBoard();
+        this.#renderBoard();
         break;
       case UpdateType.INIT:
         this.#isLoading = false;
         remove(this.#loadingView);
         this.#renderBoard();
+        break;
+      case UpdateType.DELETE_COMMENT:
+      case UpdateType.ADD_COMMENT:
+        this.#moviesModel.getUpdatedCard(updatedCardData);
         break;
     }
   };
@@ -189,6 +190,7 @@ export default class FilmsListPresenter {
   };
 
   #renderFilmCard(cardData, list) {
+
     const filmCardPresenter = new FilmCardPresenter(this.#filmLists[list].element, this.#handleViewAction, this.#commentsModel, this.#filterModel, this.#closeAllPopups);
     filmCardPresenter.init(cardData);
 
@@ -221,15 +223,14 @@ export default class FilmsListPresenter {
     this.#renderTopList();
 
     this.#renderMostCommentedList();
-
-    // this.#renderLoading();
-
   }
 
   #renderFilmList(to) {
+
     this.moviesDataCards
       .slice(this.#renderedFilmCount, to)
       .forEach((filmCard) => {
+        // console.log(filmCard.film_info.total_rating);
         this.#renderFilmCard(filmCard, ListType.MAIN);
       });
 
@@ -246,7 +247,7 @@ export default class FilmsListPresenter {
     render(this.#topListWrapperView, this.#allListsWrapperView.element);
     render(this.#filmLists['top'], this.#topListWrapperView.element);
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 0; i++) {
       this.#renderFilmCard(this.moviesDataCards[i], ListType.TOP);
     }
   }
@@ -257,7 +258,7 @@ export default class FilmsListPresenter {
     render(this.#mostCommentedListWrapperView, this.#allListsWrapperView.element);
     render(this.#filmLists[ListType.MOST_COMMENTED], this.#mostCommentedListWrapperView.element);
 
-    for (let i = 0; i < 2; i++) {
+    for (let i = 0; i < 0; i++) {
       this.#renderFilmCard(this.moviesDataCards[i], ListType.MOST_COMMENTED);
     }
   }

@@ -3,9 +3,14 @@ import CommentsListView from '../view/popup/comments-list-view';
 import CommentView from '../view/popup/comment-view';
 import AddCommentView from '../view/popup/add-comment-view';
 
-import {UserAction, UpdateType} from '../consts';
-
 import {render, remove, replace} from '../framework/render.js';
+
+import UiBlocker from '../framework/ui-blocker/ui-blocker.js';
+
+const TimeLimit = {
+  LOWER_LIMIT: 350,
+  UPPER_LIMIT: 1000,
+};
 
 export default class CommentsPresenter {
   #commentsList = null;
@@ -15,13 +20,14 @@ export default class CommentsPresenter {
 
   #commentsModel = null;
   #comments = []; // все комменты к выьранному фильму
+  #commentViews = new Map();
 
   #movieCard = null;
-  #updateCard = null;
 
-  constructor(container, updateCard, commentsModel) {
+  #uiBlocker = new UiBlocker(TimeLimit.LOWER_LIMIT, TimeLimit.UPPER_LIMIT);
+
+  constructor(container, commentsModel) {
     this.#container = container;
-    this.#updateCard = updateCard;
     this.#commentsModel = commentsModel;
 
     document.addEventListener('keydown', this.onEnterKeyDown);
@@ -35,12 +41,14 @@ export default class CommentsPresenter {
     const prevCommentsWrapper = this.#commentsWrapper;
     this.#commentsWrapper = new CommentsWrapperView(this.#comments.length);
     this.#commentsList = new CommentsListView();
+    this.#commentViews.clear();
 
     render(this.#commentsWrapper, this.#container.element);
     render(this.#commentsList, this.#commentsWrapper.element);
     for (let i = 0; i < this.#comments.length; i++) {
       const comment = new CommentView(this.#comments[i]);
       comment.setCommentDeleteHandler(this.#onCommentDelete);
+      this.#commentViews.set(this.#comments[i].id, comment);
       render(comment, this.#commentsList.element);
     }
 
@@ -53,17 +61,21 @@ export default class CommentsPresenter {
     render(this.#addComment, this.#container.element);
   }
 
-  #onCommentDelete = (commentId) => {
-    let comments = new Set(this.#movieCard.comments);
-    comments.delete(commentId);
-    comments = Array.from(comments);
-    this.#movieCard.comments = [...comments];
-    this.#updateCard(UserAction.UPDATE_CARD, UpdateType.PATCH, this.#movieCard);
+  #onCommentDelete = async (commentId) => {
+    this.#commentViews.get(commentId).updateElement({isDeleting: true});
 
-    this.#commentsModel.deleteComment(commentId);
+    this.#uiBlocker.block();
+
+    try {
+      await this.#commentsModel.deleteComment(commentId, this.#movieCard.id);
+    } catch(err) {
+      this.#commentViews.get(commentId).updateElement({isDeleting: false});
+    }
+
+    this.#uiBlocker.unblock();
   };
 
-  onEnterKeyDown = (evt) => {
+  onEnterKeyDown = async (evt) => {
     if (evt.key === 'Enter' && evt.ctrlKey) {
       evt.preventDefault();
 
@@ -72,13 +84,22 @@ export default class CommentsPresenter {
         return;
       }
 
-      const commentId = this.#commentsModel.generateNewCommentId();
-      comment.id = commentId;
-      this.#commentsModel.addComment(comment);
-      this.#addComment.reset();
+      this.#addComment.updateElement({isSaving: true});
 
-      this.#movieCard.comments.push(commentId);
-      this.#updateCard(UserAction.UPDATE_CARD, UpdateType.PATCH, this.#movieCard);
+      this.#uiBlocker.block();
+
+      try {
+        await this.#commentsModel.addComment(comment, this.#movieCard.id);
+        this.#addComment.reset();
+      } catch(err) {
+        this.#addComment.shake(this.#abortingAction);
+      }
+
+      this.#uiBlocker.unblock();
     }
+  };
+
+  #abortingAction = () => {
+    this.#addComment.updateElement({isSaving: false});
   };
 }

@@ -1,11 +1,13 @@
-import AbstractView from '../../framework/view/abstract-view.js';
+import AbstractStatefulView from '../../framework/view/abstract-stateful-view.js';
 import {getTimeFromIso} from '../../utils';
 import he from 'he';
 
 const createCommentTemplate = (comment) => {
-  const {author, comment:commentText, date:isoDate, emotion, id:commentId} = comment;
+  const {author, comment:commentText, date:isoDate, emotion, id:commentId, isDeleting} = comment;
 
   const dateTime = getTimeFromIso(isoDate);
+  const buttonText = isDeleting? 'Deleting...' : 'Delete';
+  const disabled = isDeleting? 'disabled' : '';
 
   return (
     `<li class="film-details__comment">
@@ -17,23 +19,32 @@ const createCommentTemplate = (comment) => {
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
         <span class="film-details__comment-day">${dateTime}</span>
-        <button class="film-details__comment-delete" data-comment-id="${commentId}">Delete</button>
+        <button class="film-details__comment-delete" data-comment-id="${commentId}" ${disabled}>${buttonText}</button>
       </p>
     </div>
     </li>`
   );
 };
 
-export default class CommentView extends AbstractView {
-  #comment = null;
-
+export default class CommentView extends AbstractStatefulView {
   constructor(comment) {
     super();
-    this.#comment = comment;
+    this._state = CommentView.parseCommentToState(comment);
   }
 
   get template() {
-    return createCommentTemplate(this.#comment);
+    return createCommentTemplate(this._state);
+  }
+
+  static parseCommentToState = (comment) => (
+    {
+      ...comment,
+      isDeleting: false,
+    }
+  );
+
+  _restoreHandlers() {
+    this.setCommentDeleteHandler(this._callback.commentDelete);
   }
 
   setCommentDeleteHandler(callback) {
