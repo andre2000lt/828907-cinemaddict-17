@@ -69,7 +69,7 @@ export default class CommentsPresenter {
     try {
       await this.#commentsModel.deleteComment(commentId, this.#movieCard.id);
     } catch(err) {
-      this.#commentViews.get(commentId).updateElement({isDeleting: false});
+      this.#commentViews.get(commentId).updateDeleteButton({isDeleting: false});
     }
 
     this.#uiBlocker.unblock();

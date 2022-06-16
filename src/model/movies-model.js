@@ -31,7 +31,7 @@ export default class MoviesModel extends Observable {
       this.#moviesDataCards = [...cards];
       const updatedCard = this.#moviesDataCards.find((card) => card.id ===cardId);
 
-      this._notify(UpdateType.PATCH, updatedCard);
+      this._notify(UpdateType.MAJOR, updatedCard);
     } catch(err) {
       throw new Error(err);
     }

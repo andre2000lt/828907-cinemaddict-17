@@ -1,5 +1,17 @@
 import {FilterType} from './consts.js';
 
+const RATINGS = {
+  'movie buff': 21,
+  'fun': 11,
+  'novice': 1
+};
+
+const EXTRA_LIST_CARD_COUNT = 2;
+
+const DESCRIPTION_SYNBOL_COUNT = 140;
+
+// const emotions = ['smile', 'sleeping', 'puke', 'angry'];
+
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
@@ -7,7 +19,9 @@ const getRandomInteger = (a = 0, b = 1) => {
   return Math.floor(lower + Math.random() * (upper - lower + 1));
 };
 
+
 const getRandomDate = (start, end) => new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
+
 
 const shuffleArray = (arr) => {
 
@@ -21,40 +35,6 @@ const shuffleArray = (arr) => {
   return array;
 };
 
-const getTimeFromIso = (isoDate) => {
-  const dayCount = {
-    '1': 86400000,
-    '2': 172800000,
-    '3': 259200000
-  };
-
-  const dateNow = new Date();
-  const commDate = new Date(Date.parse(isoDate));
-
-  const diff = +dateNow - Date.parse(isoDate);
-
-  if (diff < dayCount[1]) {
-    return (dateNow.getDate === commDate.getDate) ? 'Today' : '1 day ago';
-  }
-
-  if (diff < dayCount[2]) {
-    return '2 days ago';
-  }
-
-  if (diff < dayCount[3]) {
-    return '3 days ago';
-  }
-
-  const month = (`0${commDate.getMonth() + 1}`).slice(-2);
-  const day = (`0${commDate.getDate()}`).slice(-2);
-  const hours = (`0${commDate.getHours()}`).slice(-2);
-  const minutes = (`0${commDate.getMinutes()}`).slice(-2);
-
-
-  return `${commDate.getFullYear()}/${month}/${day} ${hours}:${minutes}`;
-};
-
-const emotions = ['smile', 'sleeping', 'puke', 'angry'];
 
 const splitArray = (array, childArrayLength) => {
   if (childArrayLength >= array.length) {
@@ -71,12 +51,6 @@ const splitArray = (array, childArrayLength) => {
   return newArray;
 };
 
-
-const RATINGS = {
-  'movie buff': 21,
-  'fun': 11,
-  'novice': 1
-};
 
 const getUserStatus = (cardsData) => {
   const watchedFilms = cardsData.filter((cardData) => cardData.user_details['already_watched']).length;
@@ -101,6 +75,7 @@ const getFilterStats = (cardsData) => ({
   [FilterType.FAVORITES]: cardsData.filter((cardData) => cardData.user_details['favorite']).length,
 });
 
+
 const filterCards = (cards, selectedFilter) => {
   const filteredCards = [...cards];
 
@@ -116,6 +91,7 @@ const filterCards = (cards, selectedFilter) => {
   }
 };
 
+
 const sortCardsByDate = (cardsData) => {
   const sortedCardsData = [...cardsData];
 
@@ -128,6 +104,7 @@ const sortCardsByDate = (cardsData) => {
 
   return sortedCardsData;
 };
+
 
 const sortCardsByRating = (cardsData) => {
   const sortedCardsData = [...cardsData];
@@ -142,7 +119,39 @@ const sortCardsByRating = (cardsData) => {
   return sortedCardsData;
 };
 
-const cropText = (text, symbolCount = 140) => {
+
+const sortCardsByCommentCount = (cardsData) => {
+  const sortedCardsData = [...cardsData];
+
+  sortedCardsData.sort((a, b) => b.comments.length - a.comments.length);
+
+  return sortedCardsData;
+};
+
+
+const getTopCards = (cardsData, cardCount = EXTRA_LIST_CARD_COUNT) => {
+  if (cardsData.length === 0) {
+    return [];
+  }
+
+  const topDataCards = sortCardsByRating([...cardsData]).filter((card) => card.film_info.total_rating > 0);
+
+  return topDataCards.slice(0, Math.min(topDataCards.length, cardCount));
+};
+
+
+const getMostCommentedCards = (cardsData) => {
+  if (cardsData.length === 0) {
+    return [];
+  }
+
+  const mostCommentedCards  = sortCardsByCommentCount([...cardsData]);
+
+  return mostCommentedCards;
+};
+
+
+const cropText = (text, symbolCount = DESCRIPTION_SYNBOL_COUNT) => {
   if (text.length > symbolCount) {
     text = `${text.slice(0, symbolCount - 1)}...`;
   }
@@ -151,4 +160,4 @@ const cropText = (text, symbolCount = 140) => {
 };
 
 
-export {getRandomInteger, getRandomDate, shuffleArray, getTimeFromIso, splitArray, emotions, getUserStatus, getFilterStats, filterCards, sortCardsByDate, sortCardsByRating, cropText};
+export {getRandomInteger, getRandomDate, shuffleArray, splitArray, getUserStatus, getFilterStats, filterCards, sortCardsByDate, sortCardsByRating, cropText, getTopCards, getMostCommentedCards};

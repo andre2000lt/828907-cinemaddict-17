@@ -7,7 +7,7 @@ import {UserAction, UpdateType, FilterType} from '../consts';
 
 
 export default class FilmCardPresenter {
-  #filmCardContainer = null;
+  #container = null;
   #siteFooterElement = document.querySelector('.footer');
 
   #filmCardView = null;
@@ -22,17 +22,25 @@ export default class FilmCardPresenter {
 
   #commentsLoaded = null;
 
-  constructor(filmCardContainer, updateCard, commentsModel, filterModel, closeAllPopups) {
-    this.#filmCardContainer = filmCardContainer;
+  constructor(updateCard, commentsModel, filterModel, closeAllPopups) {
     this.#updateCard = updateCard;
     this.#commentsModel = commentsModel;
     this.#filterModel = filterModel;
     this.#closeAllPopups = closeAllPopups;
   }
 
-  init(cardData) {
+  init(container, cardData, renderView = true) {
+    this.#container = container;
     this.#cardData = cardData;
     this.#commentsLoaded = this.#commentsModel.getComments(this.#cardData.id);
+
+    if (this.#isPopupOpened()) {
+      this.#updateDetailsPresenter();
+    }
+
+    if (!renderView) {
+      return;
+    }
 
     const prevfilmCardView = this.#filmCardView;
 
@@ -46,14 +54,10 @@ export default class FilmCardPresenter {
 
 
     if (prevfilmCardView === null) {
-      render(this.#filmCardView, this.#filmCardContainer);
+      render(this.#filmCardView, this.#container);
     } else {
       replace(this.#filmCardView, prevfilmCardView);
       remove(prevfilmCardView);
-
-      if (this.isPopupOpened()) {
-        this.updateDetailsPresenter();
-      }
     }
   }
 
@@ -98,15 +102,15 @@ export default class FilmCardPresenter {
 
   destroy() {
     remove(this.#filmCardView);
+    this.#filmCardView = null;
   }
 
-  isPopupOpened () {
-    return this.#detailsPresenter !== null;
-  }
+  #isPopupOpened = () => this.#detailsPresenter !== null;
+  isRendered = () => this.#filmCardView !== null;
 
-  updateDetailsPresenter() {
-    this.#commentsLoaded.then((comments) => {
+  #updateDetailsPresenter = () => {
+    this.#commentsModel.getComments(this.#cardData.id).then((comments) => {
       this.#detailsPresenter.init(this.#cardData, comments);
     });
-  }
+  };
 }

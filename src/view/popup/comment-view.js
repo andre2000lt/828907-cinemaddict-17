@@ -1,11 +1,14 @@
 import AbstractStatefulView from '../../framework/view/abstract-stateful-view.js';
-import {getTimeFromIso} from '../../utils';
 import he from 'he';
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 const createCommentTemplate = (comment) => {
   const {author, comment:commentText, date:isoDate, emotion, id:commentId, isDeleting} = comment;
 
-  const dateTime = getTimeFromIso(isoDate);
+  const dateTime = dayjs(isoDate).toNow();
   const buttonText = isDeleting? 'Deleting...' : 'Delete';
   const disabled = isDeleting? 'disabled' : '';
 
@@ -45,6 +48,10 @@ export default class CommentView extends AbstractStatefulView {
 
   _restoreHandlers() {
     this.setCommentDeleteHandler(this._callback.commentDelete);
+  }
+
+  updateDeleteButton(update) {
+    this.updateElement(update);
   }
 
   setCommentDeleteHandler(callback) {

@@ -27,6 +27,6 @@ export default class FilterPresenter {
   }
 
   #onModelDataChange = () => {
-    this.#profileView.updateElement(this.status);
+    this.#profileView.updateProfileStatus(this.status);
   };
 }

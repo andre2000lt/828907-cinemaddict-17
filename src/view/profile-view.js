@@ -16,6 +16,10 @@ export default class ProfileView extends AbstractStatefulView {
     return createProfileTemplate(this._state);
   }
 
+  updateProfileStatus(update) {
+    this.updateElement(update);
+  }
+
   _restoreHandlers() {
 
   }
