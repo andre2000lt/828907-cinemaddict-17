@@ -39,13 +39,6 @@ export default class CommentView extends AbstractStatefulView {
     return createCommentTemplate(this._state);
   }
 
-  static parseCommentToState = (comment) => (
-    {
-      ...comment,
-      isDeleting: false,
-    }
-  );
-
   _restoreHandlers() {
     this.setCommentDeleteHandler(this._callback.commentDelete);
   }
@@ -63,4 +56,11 @@ export default class CommentView extends AbstractStatefulView {
     evt.preventDefault();
     this._callback.commentDelete(evt.target.dataset.commentId);
   };
+
+  static parseCommentToState = (comment) => (
+    {
+      ...comment,
+      isDeleting: false,
+    }
+  );
 }

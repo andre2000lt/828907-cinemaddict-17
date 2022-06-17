@@ -17,8 +17,6 @@ export default class SortView extends AbstractStatetfulView {
     return createSortTemplate(this._state);
   }
 
-  static parseParamsToState = (sortType) => ({sortType: sortType});
-
   setSortTypeChangeHandler = (callback) => {
     this._callback.sortTypeChange = callback;
     this.element.addEventListener('click', this.#sortTypeChangeHandler);
@@ -42,4 +40,6 @@ export default class SortView extends AbstractStatetfulView {
     const update = SortView.parseParamsToState(currentSortType);
     this.updateElement(update);
   }
+
+  static parseParamsToState = (sortType) => ({sortType: sortType});
 }

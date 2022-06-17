@@ -44,10 +44,10 @@ export default class FilmCardPresenter {
     this.#filmCardView = new FilmCardView(cardData);
 
 
-    this.#filmCardView.setLinkClickHandler(this.#onCardLinkClick);
-    this.#filmCardView.setFavoriteClickHandler(this.#onFavoriteLinkClick);
-    this.#filmCardView.setAlreadyWatchedClickHandler(this.#onAlreadyWatchedClick);
-    this.#filmCardView.setWatchlistClickHandler(this.#onWatchlistClick);
+    this.#filmCardView.setLinkClickHandler(this.#cardLinkClickHandler);
+    this.#filmCardView.setFavoriteClickHandler(this.#favoriteLinkClickHandler);
+    this.#filmCardView.setAlreadyWatchedClickHandler(this.#alreadyWatchedClickHandler);
+    this.#filmCardView.setWatchlistClickHandler(this.#watchlistClickHandler);
 
 
     if (prevfilmCardView === null) {
@@ -69,7 +69,7 @@ export default class FilmCardPresenter {
     }
   };
 
-  #onCardLinkClick = () => {
+  #cardLinkClickHandler = () => {
     this.#closeAllPopups();
     this.#commentsModel.getComments(this.#cardData.id).then((comments) => {
       document.body.classList.add('hide-overflow');
@@ -79,19 +79,19 @@ export default class FilmCardPresenter {
     });
   };
 
-  #onFavoriteLinkClick = () => {
+  #favoriteLinkClickHandler = () => {
     const updateType = this.#filterModel.filter === FilterType.ALL? UpdateType.PATCH : UpdateType.MINOR;
     this.#cardData.user_details.favorite = !this.#cardData.user_details.favorite;
     this.#updateCard(UserAction.UPDATE_CARD, updateType, this.#cardData);
   };
 
-  #onAlreadyWatchedClick = () => {
+  #alreadyWatchedClickHandler = () => {
     const updateType = this.#filterModel.filter === FilterType.ALL? UpdateType.PATCH : UpdateType.MINOR;
     this.#cardData.user_details['already_watched'] = !this.#cardData.user_details.already_watched;
     this.#updateCard(UserAction.UPDATE_CARD, updateType, this.#cardData);
   };
 
-  #onWatchlistClick = () => {
+  #watchlistClickHandler = () => {
     const updateType = this.#filterModel.filter === FilterType.ALL? UpdateType.PATCH : UpdateType.MINOR;
     this.#cardData.user_details.watchlist = !this.#cardData.user_details.watchlist;
     this.#updateCard(UserAction.UPDATE_CARD, updateType, this.#cardData);

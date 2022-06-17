@@ -55,8 +55,6 @@ export default class AddCommentView extends AbstractStatefulView {
     this.element.querySelector('.film-details__comment-input').addEventListener('input', this.#commentInputHandler);
   };
 
-  static parseCommentToState = (comment) => ({...comment, isSaving: false});
-
   getNewComment() {
     if(this._state.emotion === null || this._state.comment === '') {
       return false;
@@ -95,4 +93,6 @@ export default class AddCommentView extends AbstractStatefulView {
   reset() {
     this.updateElement({...BLANK_COMMENT, isSaving: false});
   }
+
+  static parseCommentToState = (comment) => ({...comment, isSaving: false});
 }

@@ -14,22 +14,22 @@ export default class FilterPresenter {
     this.#filterModel = filterModel;
     this.#moviesModel = moviesModel;
 
-    this.#moviesModel.addObserver(this.#onModelDataChange);
-    this.#filterModel.addObserver(this.#onModelDataChange);
+    this.#moviesModel.addObserver(this.#modelDataChangeHandler);
+    this.#filterModel.addObserver(this.#modelDataChangeHandler);
   }
 
   init() {
     this.#filterView = new FilterView(this.#moviesModel.moviesDataCards, this.#filterModel.filter);
-    this.#filterView.setFilterTypeChangeHandler(this.#onFilterTypeChange);
+    this.#filterView.setFilterTypeChangeHandler(this.#filterTypeChangeHandler);
 
     render(this.#filterView, this.#filterContainer, RenderPosition.AFTERBEGIN);
   }
 
-  #onModelDataChange = () => {
+  #modelDataChangeHandler = () => {
     this.#filterView.updateFilter(this.#moviesModel.moviesDataCards, this.#filterModel.filter);
   };
 
-  #onFilterTypeChange = (selectedFilter) => {
+  #filterTypeChangeHandler = (selectedFilter) => {
     this.#filterModel.setFilter(UpdateType.CHANGE_FILTER, selectedFilter);
   };
 }

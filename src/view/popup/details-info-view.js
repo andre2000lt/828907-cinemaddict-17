@@ -17,9 +17,9 @@ const createGenresTemplate = (genres) => {
 };
 
 const createDetailsInfoTemplate = (card) => {
-  const {title, alternative_title:originalTitle, total_rating:rating, description, poster, runtime, genre, director, writers:writersArr, actors:actorsArr, age_rating:ageRating} = card.film_info;
-  const writers = writersArr.join(', ');
-  const actors = actorsArr.join(', ');
+  const {title, alternative_title:originalTitle, total_rating:rating, description, poster, runtime, genre, director, writers:writers, actors:actors, age_rating:ageRating} = card.film_info;
+  const movieWriters = writers.join(', ');
+  const movieActors = actors.join(', ');
 
   const {date:isoDate, release_country:country} = card.film_info.release;
   const date = new Date(Date.parse(isoDate));
@@ -60,11 +60,11 @@ const createDetailsInfoTemplate = (card) => {
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Writers</td>
-            <td class="film-details__cell">${writers}</td>
+            <td class="film-details__cell">${movieWriters}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Actors</td>
-            <td class="film-details__cell">${actors}</td>
+            <td class="film-details__cell">${movieActors}</td>
           </tr>
           <tr class="film-details__row">
             <td class="film-details__term">Release Date</td>

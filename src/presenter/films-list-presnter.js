@@ -66,9 +66,9 @@ export default class FilmsListPresenter {
 
     this.#commentsModel = commentsModel;
 
-    this.#moviesModel.addObserver(this.#onModelChange);
-    this.#filterModel.addObserver(this.#onModelChange);
-    this.#commentsModel.addObserver(this.#onModelChange);
+    this.#moviesModel.addObserver(this.#modelChangeHandler);
+    this.#filterModel.addObserver(this.#modelChangeHandler);
+    this.#commentsModel.addObserver(this.#modelChangeHandler);
   }
 
 
@@ -111,11 +111,11 @@ export default class FilmsListPresenter {
 
   #renderSort() {
     this.#sortView = new SortView(this.#currentSortType);
-    this.#sortView.setSortTypeChangeHandler(this.#onSortChange);
+    this.#sortView.setSortTypeChangeHandler(this.#SortChangeHandler);
     render(this.#sortView, this.#allListsWrapperView.element, RenderPosition.BEFOREBEGIN);
   }
 
-  #onSortChange = (sortBy) => {
+  #SortChangeHandler = (sortBy) => {
     if (sortBy === this.#currentSortType) {
       return;
     }
@@ -137,7 +137,7 @@ export default class FilmsListPresenter {
     }
   };
 
-  #onModelChange = (updateType, updatedCardData) => {
+  #modelChangeHandler = (updateType, updatedCardData) => {
     switch (updateType) {
       case UpdateType.PATCH:
         for (const listName in this.#filmCardPresenters) {
@@ -183,7 +183,7 @@ export default class FilmsListPresenter {
     }
   };
 
-  #onShowMoreButtonClick = () => {
+  #showMoreButtonClickHandler = () => {
     this.#renderFilmList(this.#renderedFilmCount + FILM_COUNT_PER_STEP);
 
     if (this.#renderedFilmCount >= this.moviesDataCards.length) {
@@ -194,7 +194,7 @@ export default class FilmsListPresenter {
   #renderShowMoreButton() {
     render(this.#showMoreButtonView, this.#mainListWrapperView.element);
 
-    this.#showMoreButtonView.setClickHandler(this.#onShowMoreButtonClick);
+    this.#showMoreButtonView.setClickHandler(this.#showMoreButtonClickHandler);
   }
 
   #closeAllPopups = () => {
@@ -287,22 +287,25 @@ export default class FilmsListPresenter {
     render(this.#mostCommentedListWrapperView, this.#allListsWrapperView.element);
     render(this.#filmLists[ListType.MOST_COMMENTED], this.#mostCommentedListWrapperView.element);
 
-    for (let i = 0; i < this.mostCommentedDataCards.length; i++) {
+    let i = 0;
+    for (const mostCommentedDataCard of this.mostCommentedDataCards) {
       let renderCard = true;
 
-      if (this.mostCommentedDataCards[i].comments.length === 0 || i > 1) {
+      if (mostCommentedDataCard.comments.length === 0 || i > 1) {
         renderCard = false;
       }
 
       if (update) {
 
-        const cardPresenter = this.#filmCardPresenters[ListType.MOST_COMMENTED].get(this.mostCommentedDataCards[i].id);
+        const cardPresenter = this.#filmCardPresenters[ListType.MOST_COMMENTED].get(mostCommentedDataCard.id);
         if(cardPresenter) {
-          this.#renderFilmCard(ListType.MOST_COMMENTED, cardPresenter, this.mostCommentedDataCards[i], renderCard);
+          this.#renderFilmCard(ListType.MOST_COMMENTED, cardPresenter, mostCommentedDataCard, renderCard);
         }
       } else {
-        this.#createFilmCard(this.mostCommentedDataCards[i], ListType.MOST_COMMENTED, renderCard);
+        this.#createFilmCard(mostCommentedDataCard, ListType.MOST_COMMENTED, renderCard);
       }
+
+      i++;
     }
   }
 

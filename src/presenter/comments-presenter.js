@@ -30,7 +30,7 @@ export default class CommentsPresenter {
     this.#container = container;
     this.#commentsModel = commentsModel;
 
-    document.addEventListener('keydown', this.onEnterKeyDown);
+    document.addEventListener('keydown', this.enterKeyDownHandler);
   }
 
   init(movieCard, comments) {
@@ -45,11 +45,11 @@ export default class CommentsPresenter {
 
     render(this.#commentsWrapper, this.#container.element);
     render(this.#commentsList, this.#commentsWrapper.element);
-    for (let i = 0; i < this.#comments.length; i++) {
-      const comment = new CommentView(this.#comments[i]);
-      comment.setCommentDeleteHandler(this.#onCommentDelete);
-      this.#commentViews.set(this.#comments[i].id, comment);
-      render(comment, this.#commentsList.element);
+    for (const comment of this.#comments) {
+      const commentView = new CommentView(comment);
+      commentView.setCommentDeleteHandler(this.#CommentDeleteHandler);
+      this.#commentViews.set(comment.id, commentView);
+      render(commentView, this.#commentsList.element);
     }
 
     if (prevCommentsWrapper !== null) {
@@ -61,7 +61,7 @@ export default class CommentsPresenter {
     render(this.#addComment, this.#container.element);
   }
 
-  #onCommentDelete = async (commentId) => {
+  #CommentDeleteHandler = async (commentId) => {
     this.#commentViews.get(commentId).updateElement({isDeleting: true});
 
     this.#uiBlocker.block();
@@ -75,7 +75,7 @@ export default class CommentsPresenter {
     this.#uiBlocker.unblock();
   };
 
-  onEnterKeyDown = async (evt) => {
+  enterKeyDownHandler = async (evt) => {
     if (evt.key === 'Enter' && evt.ctrlKey) {
       evt.preventDefault();
 
@@ -92,14 +92,14 @@ export default class CommentsPresenter {
         await this.#commentsModel.addComment(comment, this.#movieCard.id);
         this.#addComment.reset();
       } catch(err) {
-        this.#addComment.shake(this.#abortingAction);
+        this.#addComment.shake(this.#abortAction);
       }
 
       this.#uiBlocker.unblock();
     }
   };
 
-  #abortingAction = () => {
+  #abortAction = () => {
     this.#addComment.updateElement({isSaving: false});
   };
 }

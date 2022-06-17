@@ -2,7 +2,7 @@ import ProfilePresenter from './presenter/profile-presenter';
 
 import FilmsListPresenter from './presenter/films-list-presnter';
 import MoviesModel from './model/movies-model.js';
-import CommentsModel from './model/commets-model';
+import CommentsModel from './model/comments-model';
 
 
 import StatsPresenter from './presenter/stats-presenter';

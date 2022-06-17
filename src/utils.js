@@ -10,45 +10,6 @@ const EXTRA_LIST_CARD_COUNT = 2;
 
 const DESCRIPTION_SYNBOL_COUNT = 140;
 
-const getRandomInteger = (a = 0, b = 1) => {
-  const lower = Math.ceil(Math.min(a, b));
-  const upper = Math.floor(Math.max(a, b));
-
-  return Math.floor(lower + Math.random() * (upper - lower + 1));
-};
-
-
-const getRandomDate = (start, end) => new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
-
-
-const shuffleArray = (arr) => {
-
-  const array = arr.slice(0);
-
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
-  }
-
-  return array;
-};
-
-
-const splitArray = (array, childArrayLength) => {
-  if (childArrayLength >= array.length) {
-    return [array.slice()];
-  }
-
-  const newArray = [];
-  let n = 0;
-  while(n <= array.length - 1) {
-    newArray.push(array.slice(n, n + childArrayLength));
-    n += childArrayLength;
-  }
-
-  return newArray;
-};
-
 
 const getUserStatus = (cardsData) => {
   const watchedFilms = cardsData.filter((cardData) => cardData.user_details['already_watched']).length;
@@ -158,4 +119,4 @@ const cropText = (text, symbolCount = DESCRIPTION_SYNBOL_COUNT) => {
 };
 
 
-export {getRandomInteger, getRandomDate, shuffleArray, splitArray, getUserStatus, getFilterStats, filterCards, sortCardsByDate, sortCardsByRating, cropText, getTopCards, getMostCommentedCards};
+export {getUserStatus, getFilterStats, filterCards, sortCardsByDate, sortCardsByRating, cropText, getTopCards, getMostCommentedCards};

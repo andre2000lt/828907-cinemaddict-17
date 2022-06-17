@@ -26,12 +26,6 @@ export default class FilterView extends AbstractStatetfulView {
     return createMenuTemplate(this._state);
   }
 
-  static parseParamsToState = (cardsData, currentFilter) => {
-    const state = {...getFilterStats(cardsData)};
-    state.currentFilter = currentFilter;
-    return state;
-  };
-
   setFilterTypeChangeHandler = (callback) => {
     this._callback.filterTypeChange = callback;
     this.element.addEventListener('click', this.#filterTypeChangeHandler);
@@ -54,4 +48,10 @@ export default class FilterView extends AbstractStatetfulView {
     const update = FilterView.parseParamsToState(cardsData, currentFilter);
     this.updateElement(update);
   }
+
+  static parseParamsToState = (cardsData, currentFilter) => {
+    const state = {...getFilterStats(cardsData)};
+    state.currentFilter = currentFilter;
+    return state;
+  };
 }

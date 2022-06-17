@@ -53,9 +53,9 @@ export default class DetailsPresenter {
     this.#detailsInfoElement = new DetailsInfoView(this.#movieCard);
     this.#detailsControlsElement = new DetailsControlsView(this.#movieCard);
 
-    this.#detailsControlsElement.setFavoriteClickHandler(this.#onFavoriteLinkClick);
-    this.#detailsControlsElement.setAlreadyWatchedClickHandler(this.#onAlreadyWatchedClick);
-    this.#detailsControlsElement.setWatchlistClickHandler(this.#onWatchlistClick);
+    this.#detailsControlsElement.setFavoriteClickHandler(this.#favoriteLinkClickHandler);
+    this.#detailsControlsElement.setAlreadyWatchedClickHandler(this.#alreadyWatchedClickHandler);
+    this.#detailsControlsElement.setWatchlistClickHandler(this.#watchlistClickHandler);
 
     if (prevDetailsControlsElement !== null || this.#commentsPresenter !== null) {
       replace(this.#detailsControlsElement, prevDetailsControlsElement);
@@ -79,30 +79,30 @@ export default class DetailsPresenter {
 
     this.#commentsPresenter.init(this.#movieCard, this.#movieComments);
 
-    this.#detailsClose.setClickHandler(this. #onClosecButtonClick);
-    document.addEventListener('keydown', this.#onEscKeyDown);
+    this.#detailsClose.setClickHandler(this.#closecButtonClickHandler);
+    document.addEventListener('keydown', this.#escKeyDownHandler);
   }
 
-  #onFavoriteLinkClick = () => {
+  #favoriteLinkClickHandler = () => {
     this.#movieCard.user_details.favorite = !this.#movieCard.user_details.favorite;
     this.#updateCard(UserAction.UPDATE_CARD, UpdateType.PATCH, this.#movieCard);
   };
 
-  #onAlreadyWatchedClick = () => {
+  #alreadyWatchedClickHandler = () => {
     this.#movieCard.user_details['already_watched'] = !this.#movieCard.user_details.already_watched;
     this.#updateCard(UserAction.UPDATE_CARD, UpdateType.PATCH, this.#movieCard);
   };
 
-  #onWatchlistClick = () => {
+  #watchlistClickHandler = () => {
     this.#movieCard.user_details.watchlist = !this.#movieCard.user_details.watchlist;
     this.#updateCard(UserAction.UPDATE_CARD, UpdateType.PATCH, this.#movieCard);
   };
 
-  #onClosecButtonClick = () => {
+  #closecButtonClickHandler = () => {
     this.closePopup();
   };
 
-  #onEscKeyDown = (evt) => {
+  #escKeyDownHandler = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this.closePopup();
@@ -112,10 +112,10 @@ export default class DetailsPresenter {
   closePopup() {
     document.body.classList.remove('hide-overflow');
 
-    this.#detailsClose.element.removeEventListener('click',  this.#onClosecButtonClick);
-    document.removeEventListener('keydown', this.#onEscKeyDown);
+    this.#detailsClose.element.removeEventListener('click',  this.#closecButtonClickHandler);
+    document.removeEventListener('keydown', this.#escKeyDownHandler);
 
-    document.removeEventListener('keydown', this.#commentsPresenter.onEnterKeyDown);
+    document.removeEventListener('keydown', this.#commentsPresenter.enterKeyDownHandler);
 
     remove(this.#details);
     this.#destroyDetailsPresenter();
