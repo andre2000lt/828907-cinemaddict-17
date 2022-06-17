@@ -20,8 +20,6 @@ export default class FilmCardPresenter {
 
   #detailsPresenter = null;
 
-  #commentsLoaded = null;
-
   constructor(updateCard, commentsModel, filterModel, closeAllPopups) {
     this.#updateCard = updateCard;
     this.#commentsModel = commentsModel;
@@ -32,7 +30,6 @@ export default class FilmCardPresenter {
   init(container, cardData, renderView = true) {
     this.#container = container;
     this.#cardData = cardData;
-    this.#commentsLoaded = this.#commentsModel.getComments(this.#cardData.id);
 
     if (this.#isPopupOpened()) {
       this.#updateDetailsPresenter();
@@ -74,7 +71,7 @@ export default class FilmCardPresenter {
 
   #onCardLinkClick = () => {
     this.#closeAllPopups();
-    this.#commentsLoaded.then((comments) => {
+    this.#commentsModel.getComments(this.#cardData.id).then((comments) => {
       document.body.classList.add('hide-overflow');
 
       this.#detailsPresenter = new DetailsPresenter(this.#siteFooterElement, this.#destroyDetailsPresenter, this.#updateCard, this.#commentsModel);
