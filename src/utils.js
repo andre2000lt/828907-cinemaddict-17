@@ -10,8 +10,6 @@ const EXTRA_LIST_CARD_COUNT = 2;
 
 const DESCRIPTION_SYNBOL_COUNT = 140;
 
-// const emotions = ['smile', 'sleeping', 'puke', 'angry'];
-
 const getRandomInteger = (a = 0, b = 1) => {
   const lower = Math.ceil(Math.min(a, b));
   const upper = Math.floor(Math.max(a, b));
